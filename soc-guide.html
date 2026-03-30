@@ -1,0 +1,3325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOC Academy — Référentiel SOC Opérationnel</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #7d8590;
+  --accent: #f0a500;
+  --accent2: #58a6ff;
+  --green: #3fb950;
+  --red: #ff6b6b;
+  --orange: #f78166;
+  --purple: #bc8cff;
+  --teal: #39d353;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
+
+/* ── NOISE OVERLAY ── */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── HEADER ── */
+header {
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  position: sticky;
+  top: 0;
+  background: rgba(13,17,23,0.92);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 56px;
+}
+
+.logo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 2px;
+}
+
+.progress-bar-wrap {
+  flex:1;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.progress-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── LAYOUT ── */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: calc(100vh - 56px);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  border-right: 1px solid var(--border);
+  padding: 24px 0;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+  background: var(--surface);
+}
+
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sidebar-group {
+  margin-bottom: 24px;
+}
+
+.sidebar-group-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  padding: 0 20px 8px;
+  text-transform: uppercase;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-left: 2px solid transparent;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.sidebar-item:hover {
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+}
+
+.sidebar-item.active {
+  border-left-color: var(--accent);
+  background: rgba(240,165,0,0.06);
+  color: var(--accent);
+}
+
+.sidebar-item.done {
+  color: var(--green);
+}
+
+.sidebar-item.done .check { opacity: 1; }
+
+.check {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 9px;
+  opacity: 0;
+  transition: all 0.2s;
+}
+
+.sidebar-item.done .check {
+  background: var(--green);
+  border-color: var(--green);
+  color: #000;
+  opacity: 1;
+}
+
+.num-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  margin-left: auto;
+}
+
+/* ── MAIN ── */
+main {
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 64px 64px 48px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(240,165,0,0.04) 0%, transparent 60%);
+}
+
+.hero-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 3px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(36px, 4vw, 56px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.hero p {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 600px;
+  line-height: 1.7;
+}
+
+/* ── CONCEPT CARD ── */
+.concept {
+  padding: 48px 64px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+  scroll-margin-top: 72px;
+}
+
+.concept:hover {
+  background: rgba(255,255,255,0.01);
+}
+
+.concept-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.concept-icon {
+  font-size: 32px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.concept-meta {
+  flex: 1;
+}
+
+.concept-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.concept-title {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.concept-subtitle {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.done-btn {
+  padding: 8px 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.done-btn:hover { border-color: var(--green); color: var(--green); }
+.done-btn.marked { background: rgba(63,185,80,0.1); border-color: var(--green); color: var(--green); }
+
+/* ── CONTENT BLOCKS ── */
+.definition {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.definition strong { color: var(--accent); }
+
+.analogy {
+  background: rgba(88,166,255,0.06);
+  border: 1px solid rgba(88,166,255,0.2);
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.analogy-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--accent2);
+  margin-bottom: 10px;
+}
+
+.analogy p { font-size: 15px; line-height: 1.7; color: #94a3b8; }
+.analogy strong { color: var(--text); }
+
+.scenario {
+  background: rgba(63,185,80,0.05);
+  border: 1px solid rgba(63,185,80,0.2);
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.scenario-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--green);
+  margin-bottom: 12px;
+}
+
+.scenario p { font-size: 14px; line-height: 1.8; color: #94a3b8; }
+.scenario strong { color: var(--text); }
+.scenario code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  background: rgba(255,255,255,0.06);
+  padding: 2px 8px;
+  border-radius: 3px;
+  color: var(--accent);
+}
+
+.warning {
+  background: rgba(255,107,107,0.06);
+  border: 1px solid rgba(255,107,107,0.25);
+  border-radius: 6px;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #94a3b8;
+}
+
+.warning strong { color: var(--red); }
+
+/* terminal */
+.terminal {
+  background: #0a0c10;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.terminal-bar {
+  background: var(--surface2);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dot { width:10px; height:10px; border-radius:50%; }
+.dot-r { background:#ff5f57; }
+.dot-y { background:#febc2e; }
+.dot-g { background:#28c840; }
+
+.terminal-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: 8px;
+  letter-spacing: 1px;
+}
+
+.terminal-body {
+  padding: 20px 24px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.8;
+  color: var(--green);
+}
+
+.terminal-body .prompt { color: var(--accent); }
+.terminal-body .comment { color: var(--muted); font-style: italic; }
+.terminal-body .highlight { color: var(--accent2); }
+.terminal-body .warn { color: var(--orange); }
+.terminal-body .err { color: var(--red); }
+.terminal-body .ok { color: var(--green); }
+
+/* comparison table */
+.compare {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.compare th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.compare td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(48,54,61,0.5);
+  vertical-align: top;
+  line-height: 1.6;
+  color: #94a3b8;
+}
+
+.compare tr:hover td { background: rgba(255,255,255,0.02); }
+.compare td:first-child { font-weight: 600; color: var(--text); }
+
+/* steps */
+.steps { margin-bottom: 24px; }
+
+.step {
+  display: flex;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(48,54,61,0.4);
+}
+
+.step:last-child { border-bottom: none; }
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #000;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.step-content { flex: 1; }
+.step-title { font-weight: 600; margin-bottom: 4px; font-size: 14px; }
+.step-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* key points */
+.keypoints {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.keypoint {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.keypoint-icon { font-size: 20px; margin-bottom: 8px; }
+.keypoint-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.keypoint-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* section label */
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+
+.tag-detect { background: rgba(63,185,80,0.1); color: var(--green); border: 1px solid rgba(63,185,80,0.3); }
+.tag-framework { background: rgba(88,166,255,0.1); color: var(--accent2); border: 1px solid rgba(88,166,255,0.3); }
+.tag-tool { background: rgba(188,140,255,0.1); color: var(--purple); border: 1px solid rgba(188,140,255,0.3); }
+.tag-network { background: rgba(247,129,102,0.1); color: var(--orange); border: 1px solid rgba(247,129,102,0.3); }
+.tag-process { background: rgba(240,165,0,0.1); color: var(--accent); border: 1px solid rgba(240,165,0,0.3); }
+
+/* quiz */
+.quiz {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.quiz-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.quiz-q {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quiz-opt {
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s;
+  color: var(--muted);
+  background: transparent;
+  text-align: left;
+  width: 100%;
+}
+
+.quiz-opt:hover:not(:disabled) { border-color: var(--accent2); color: var(--text); }
+.quiz-opt.correct { border-color: var(--green); background: rgba(63,185,80,0.12); color: var(--green); font-weight: 600; }
+.quiz-opt.wrong { border-color: var(--red); background: rgba(255,107,107,0.08); color: var(--red); animation: shake 0.4s ease; }
+.quiz-opt:disabled:not(.correct):not(.wrong) { opacity: 0.4; cursor: not-allowed; }
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(8px); }
+  60%      { transform: translateX(-5px); }
+  80%      { transform: translateX(5px); }
+}
+
+.quiz-feedback {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.6;
+  display: none;
+}
+
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: rgba(63,185,80,0.08); border: 1px solid rgba(63,185,80,0.2); color: var(--green); }
+.quiz-feedback.ko { background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.2); color: #94a3b8; }
+
+/* tlp */
+.tlp-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.tlp-card {
+  border-radius: 6px;
+  padding: 16px;
+  text-align: center;
+  border: 2px solid;
+}
+
+.tlp-red { border-color: var(--red); background: rgba(255,107,107,0.08); }
+.tlp-orange { border-color: var(--orange); background: rgba(247,129,102,0.08); }
+.tlp-green { border-color: var(--green); background: rgba(63,185,80,0.08); }
+.tlp-white { border-color: var(--muted); background: rgba(125,133,144,0.08); }
+
+.tlp-circle {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.tlp-red .tlp-circle { background: var(--red); }
+.tlp-orange .tlp-circle { background: var(--orange); }
+.tlp-green .tlp-circle { background: var(--green); }
+.tlp-white .tlp-circle { background: var(--muted); }
+
+.tlp-name { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+.tlp-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* chain */
+.kill-chain {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.kc-step {
+  flex: 1;
+  min-width: 100px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 16px 12px;
+  text-align: center;
+  position: relative;
+  font-size: 12px;
+}
+
+.kc-step::after {
+  content: '→';
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-size: 16px;
+  z-index: 2;
+}
+
+.kc-step:last-child::after { display: none; }
+.kc-step:first-child { border-radius: 6px 0 0 6px; }
+.kc-step:last-child { border-radius: 0 6px 6px 0; }
+
+.kc-num { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--accent); margin-bottom: 6px; }
+.kc-icon { font-size: 20px; margin-bottom: 6px; }
+.kc-name { font-weight: 600; font-size: 11px; color: var(--text); margin-bottom: 4px; }
+.kc-ex { font-size: 10px; color: var(--muted); }
+
+/* flow */
+.flow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.flow-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.flow-step .flow-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.flow-step .flow-text { flex: 1; }
+.flow-step .flow-tool {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(240,165,0,0.1);
+  padding: 3px 10px;
+  border-radius: 3px;
+}
+
+.flow-arrow {
+  text-align: center;
+  color: var(--accent);
+  font-size: 18px;
+}
+
+
+.tool-link {
+  color: var(--accent2);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(88,166,255,0.45);
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.tool-link:hover {
+  color: #9cc9ff;
+  border-bottom-color: rgba(156,201,255,0.8);
+  background: rgba(88,166,255,0.08);
+}
+
+
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.resource-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+.resource-card h4 {
+  font-size: 14px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.resource-card p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.badge-mini {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--accent);
+  background: rgba(240,165,0,0.1);
+  border: 1px solid rgba(240,165,0,0.22);
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  width:100%;
+  padding:14px 64px;
+  color:#7d8590;
+  font-size:13px;
+  border-top:1px solid #30363d;
+  background:#0d1117;
+}
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .hero, .concept { padding: 32px 24px; }
+  .tlp-grid { grid-template-columns: repeat(2, 1fr); }
+  .kill-chain { flex-wrap: wrap; }
+  .kc-step { min-width: 80px; }
+  .kc-step::after { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">// SOC ACADEMY</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressBar"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 / 43 concepts</div>
+</header>
+
+<div class="layout">
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+  <div class="sidebar-group">
+    <div class="sidebar-group-label">Détection</div>
+    <a class="sidebar-item" href="#c1" onclick="setActive(this)"><div class="check">✓</div>IOC<span class="num-badge">01</span></a>
+    <a class="sidebar-item" href="#c2" onclick="setActive(this)"><div class="check">✓</div>TTP<span class="num-badge">02</span></a>
+    <a class="sidebar-item" href="#c21" onclick="setActive(this)"><div class="check">✓</div>IOC vs TTP<span class="num-badge">03</span></a>
+  </div>
+
+  <div class="sidebar-group">
+    <div class="sidebar-group-label">Frameworks</div>
+    <a class="sidebar-item" href="#c3" onclick="setActive(this)"><div class="check">✓</div>MITRE ATT&CK<span class="num-badge">04</span></a>
+    <a class="sidebar-item" href="#c4" onclick="setActive(this)"><div class="check">✓</div>MITRE D3FEND<span class="num-badge">05</span></a>
+    <a class="sidebar-item" href="#c5" onclick="setActive(this)"><div class="check">✓</div>Kill Chain<span class="num-badge">06</span></a>
+    <a class="sidebar-item" href="#c6" onclick="setActive(this)"><div class="check">✓</div>TLP<span class="num-badge">07</span></a>
+    <a class="sidebar-item" href="#c_nist" onclick="setActive(this)"><div class="check">✓</div>NIST<span class="num-badge">08</span></a>
+  </div>
+
+  <div class="sidebar-group">
+    <div class="sidebar-group-label">Outils SOC</div>
+    <a class="sidebar-item" href="#c7" onclick="setActive(this)"><div class="check">✓</div>SIEM<span class="num-badge">09</span></a>
+    <a class="sidebar-item" href="#c8" onclick="setActive(this)"><div class="check">✓</div>SOAR<span class="num-badge">10</span></a>
+    <a class="sidebar-item" href="#c9" onclick="setActive(this)"><div class="check">✓</div>SIRP<span class="num-badge">11</span></a>
+    <a class="sidebar-item" href="#c10" onclick="setActive(this)"><div class="check">✓</div>EDR<span class="num-badge">12</span></a>
+    <a class="sidebar-item" href="#c11" onclick="setActive(this)"><div class="check">✓</div>XDR<span class="num-badge">13</span></a>
+    <a class="sidebar-item" href="#c12" onclick="setActive(this)"><div class="check">✓</div>Sandbox<span class="num-badge">14</span></a>
+    <a class="sidebar-item" href="#c17" onclick="setActive(this)"><div class="check">✓</div>ELK Stack<span class="num-badge">15</span></a>
+  </div>
+
+  <div class="sidebar-group">
+    <div class="sidebar-group-label">Réseau</div>
+    <a class="sidebar-item" href="#c13" onclick="setActive(this)"><div class="check">✓</div>IDS / IPS<span class="num-badge">16</span></a>
+    <a class="sidebar-item" href="#c14" onclick="setActive(this)"><div class="check">✓</div>Firewall<span class="num-badge">17</span></a>
+    <a class="sidebar-item" href="#c_nmap" onclick="setActive(this)"><div class="check">✓</div>Nmap<span class="num-badge">18</span></a>
+    <a class="sidebar-item" href="#c_vpn" onclick="setActive(this)"><div class="check">✓</div>VPN<span class="num-badge">19</span></a>
+    <a class="sidebar-item" href="#c_proto" onclick="setActive(this)"><div class="check">✓</div>TCP/IP · Protocoles · Ports<span class="num-badge">20</span></a>
+    <a class="sidebar-item" href="#c15" onclick="setActive(this)"><div class="check">✓</div>Proxy<span class="num-badge">21</span></a>
+    <a class="sidebar-item" href="#c16" onclick="setActive(this)"><div class="check">✓</div>WAF<span class="num-badge">22</span></a>
+    <a class="sidebar-item" href="#c18" onclick="setActive(this)"><div class="check">✓</div>Wireshark · Logs réseau<span class="num-badge">23</span></a>
+  </div>
+
+  <div class="sidebar-group">
+    <div class="sidebar-group-label">Automatisation</div>
+    <a class="sidebar-item" href="#c19" onclick="setActive(this)"><div class="check">✓</div>n8n<span class="num-badge">24</span></a>
+    <a class="sidebar-item" href="#c20" onclick="setActive(this)"><div class="check">✓</div>Python<span class="num-badge">25</span></a>
+    <a class="sidebar-item" href="#c_script" onclick="setActive(this)"><div class="check">✓</div>Bash · PowerShell<span class="num-badge">26</span></a>
+  </div>
+
+  <div class="sidebar-group">
+    <div class="sidebar-group-label">Threat Intelligence</div>
+    <a class="sidebar-item" href="#c23" onclick="setActive(this)"><div class="check">✓</div>Threat Intelligence<span class="num-badge">27</span></a>
+    <a class="sidebar-item" href="#c24" onclick="setActive(this)"><div class="check">✓</div>GitHub & Labs<span class="num-badge">28</span></a>
+  </div>
+
+  <div class="sidebar-group">
+    <div class="sidebar-group-label">Vision globale</div>
+    <a class="sidebar-item" href="#c22" onclick="setActive(this)"><div class="check">✓</div>Rôle analyste<span class="num-badge">29</span></a>
+  </div>
+
+  <div class="sidebar-group">
+    <div class="sidebar-group-label">Outils réels</div>
+    <a class="sidebar-item" href="#c_edr2" onclick="setActive(this)"><div class="check">✓</div>EDR — Outils & exemples<span class="num-badge">30</span></a>
+    <a class="sidebar-item" href="#c_ids2" onclick="setActive(this)"><div class="check">✓</div>IDS/IPS — Snort/Suricata/Cisco<span class="num-badge">31</span></a>
+  </div>
+
+  <div class="sidebar-group">
+    <div class="sidebar-group-label">Télémétrie native Windows</div>
+    <a class="sidebar-item" href="#c_win11" onclick="setActive(this)"><div class="check">✓</div>Logs natifs Win11 + Sysmon<span class="num-badge">32</span></a>
+    <a class="sidebar-item" href="#c_defender" onclick="setActive(this)"><div class="check">✓</div>Windows Defender & outils<span class="num-badge">33</span></a>
+    <a class="sidebar-item" href="#c_centralize" onclick="setActive(this)"><div class="check">✓</div>Centraliser les journaux<span class="num-badge">34</span></a>
+  </div>
+
+  <div class="sidebar-group">
+    <div class="sidebar-group-label">⚖️ Gouvernance · Conformité · Expertise</div>
+    <a class="sidebar-item" href="#c_gouv" onclick="setActive(this)"><div class="check">✓</div>Gouvernance · GRC · ISO · ITIL<span class="num-badge">35</span></a>
+    <a class="sidebar-item" href="#c_orga" onclick="setActive(this)"><div class="check">✓</div>ANSSI · CNIL · ENISA · CISA<span class="num-badge">36</span></a>
+    <a class="sidebar-item" href="#c_forensic" onclick="setActive(this)"><div class="check">✓</div>Forensic · Reverse Engineering<span class="num-badge">37</span></a>
+    <a class="sidebar-item" href="#c_certs" onclick="setActive(this)"><div class="check">✓</div>Certifications cyber<span class="num-badge">38</span></a>
+    <a class="sidebar-item" href="#c_watch" onclick="setActive(this)"><div class="check">✓</div>Veille juridique · stratégique · IA<span class="num-badge">39</span></a>
+    <a class="sidebar-item" href="#c_logs" onclick="setActive(this)"><div class="check">✓</div>Maîtrise des logs<span class="num-badge">40</span></a>
+    <a class="sidebar-item" href="#c_oscloud" onclick="setActive(this)"><div class="check">✓</div>OS & Cloud<span class="num-badge">41</span></a>
+    <a class="sidebar-item" href="#c_jobs" onclick="setActive(this)"><div class="check">✓</div>Métiers cyber<span class="num-badge">42</span></a>
+    <a class="sidebar-item" href="#c_jargon" onclick="setActive(this)"><div class="check">✓</div>Jargon cyber · vulgarisation<span class="num-badge">43</span></a>
+  </div>
+</nav>
+
+<!-- ── MAIN CONTENT ── -->
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-tag">// RÉFÉRENTIEL OPÉRATIONNEL · 43 CONCEPTS · SOC / PENTEST / THREAT INTELLIGENCE</span>
+  <h1>Référentiel SOC<br><em>opérationnel</em></h1>
+  <p>Chaque concept est structuré sous forme de référentiel opérationnel, avec scénario d’usage, logique d’analyse, cadre méthodologique et validation des acquis. L’ensemble vise à démontrer une compréhension exploitable des environnements SOC, Threat Intelligence, détection, investigation et réponse à incident.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C1 — IOC
+═══════════════════════════════════ -->
+<div class="concept" id="c1">
+  <div class="concept-header">
+    <div class="concept-icon">🔐</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 01 · DÉTECTION</div>
+      <div class="concept-title">IOC — Indicators of Compromise</div>
+      <div class="concept-subtitle">Indicateurs de Compromission</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c1')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Un <strong>IOC</strong> est une <strong>preuve concrète qu'une attaque a eu lieu ou est en cours</strong>. C'est comme une empreinte digitale laissée par un attaquant. Il peut s'agir d'une adresse IP suspecte, d'un hash de fichier malveillant, d'un nom de domaine utilisé pour de la communication C2 (command & control), ou d'une clé de registre modifiée.
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">🏠 ANALOGIE DU QUOTIDIEN</div>
+    <p>Dans une logique d’analogie opérationnelle, une situation comparable consisterait à constater <strong>une fenêtre brisée, des traces de boue sur le carrelage et un tiroir ouvert</strong>. Sans observation directe de l’auteur, ces <strong>traces physiques = des IOC</strong>. En cyber, c'est pareil : l'attaquant est peut-être parti, mais il a laissé des empreintes.</p>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 SCÉNARIO SOC RÉEL — Qualification initiale d’un incident</div>
+    <p>Une alerte SIEM est générée : <code>CONNEXION SORTANTE DÉTECTÉE — 203.0.113.45:4444</code></p>
+    <p>Une vérification est effectuée : cette IP est dans la base de données <strong>VirusTotal</strong> et <strong>AbuseIPDB</strong> → elle est connue comme serveur C2 du groupe APT28.</p>
+    <p>C'est un <strong>IOC de type IP malveillante</strong>. L’indicateur confirme une communication vers une infrastructure malveillante. Une escalade vers le niveau 2 est engagée conformément au processus de traitement.</p>
+  </div>
+
+  <div class="keypoints">
+    <div class="keypoint"><div class="keypoint-icon">📍</div><div class="keypoint-title">IP malveillante</div><div class="keypoint-desc">Adresse connue comme serveur d'attaque ou C2</div></div>
+    <div class="keypoint"><div class="keypoint-icon">#️⃣</div><div class="keypoint-title">Hash de fichier</div><div class="keypoint-desc">MD5/SHA256 d'un malware connu (base VirusTotal)</div></div>
+    <div class="keypoint"><div class="keypoint-icon">🌐</div><div class="keypoint-title">Domaine suspect</div><div class="keypoint-desc">DNS vers domaine de phishing ou DGA</div></div>
+    <div class="keypoint"><div class="keypoint-icon">📧</div><div class="keypoint-title">Email header</div><div class="keypoint-desc">Expéditeur usurpé, pièce jointe malveillante</div></div>
+  </div>
+
+  <div class="warning">
+    <strong>⚠️ Limite critique des IOC :</strong> Un attaquant peut changer son IP en 5 minutes, créer un nouveau domaine, modifier légèrement son malware pour changer son hash. Les IOC sont <strong>statiques</strong> → faciles à contourner. C'est pour ça qu'on a besoin des TTP (concept 02).
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-label">// MINI-QUIZ — VÉRIFIE TA COMPRÉHENSION</div>
+    <div class="quiz-q">Un analyste SOC trouve le fichier <code>facture.pdf.exe</code> sur un poste. Son MD5 est dans VirusTotal. Qu'est-ce que c'est ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this, false, 'Non — un TTP c\'est un comportement, pas une empreinte de fichier.')">Un TTP</button>
+      <button class="quiz-opt" onclick="answer(this, true, 'Exact ! Le hash MD5 d\'un fichier malveillant connu est un IOC classique. L’indicateur confirme la compromission, sans documenter à lui seul le mode opératoire exact.')">Un IOC</button>
+      <button class="quiz-opt" onclick="answer(this, false, 'Non — le SIEM est l\'outil qui aurait détecté l\'IOC, pas l\'IOC lui-même.')">Un SIEM</button>
+    </div>
+    <div class="quiz-feedback" id="qf-c1"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C2 — TTP
+═══════════════════════════════════ -->
+<div class="concept" id="c2">
+  <div class="concept-header">
+    <div class="concept-icon">🧠</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 02 · DÉTECTION</div>
+      <div class="concept-title">TTP — Tactics, Techniques, Procedures</div>
+      <div class="concept-subtitle">Le mode opératoire complet d'un attaquant</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c2')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Les <strong>TTP décrivent le COMPORTEMENT d'un attaquant</strong>, pas juste une signature. C'est la différence entre "trouver les empreintes" (IOC) et "comprendre comment le cambrioleur opère toujours" (TTP). <strong>Tactique</strong> = le POURQUOI (l'objectif). <strong>Technique</strong> = le COMMENT (la méthode). <strong>Procédure</strong> = le DÉTAIL précis d'exécution.
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">🕵️ ANALOGIE — Le commissaire de police</div>
+    <p>Un cambrioleur récidiviste a un <strong>mode opératoire</strong> : il vise toujours les maisons en angle de rue (Tactique = ciblage), il entre toujours par la fenêtre de la salle de bain au 1er étage (Technique = intrusion), il utilise toujours un tournevis modèle Facom 6mm (Procédure). Même s'il change de ville et d'adresse, <strong>son comportement le trahit</strong>. C'est la puissance des TTP.</p>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 SCÉNARIO SOC — Analyser un incident en TTP</div>
+    <p><strong>Tactique :</strong> "Persistence" → l'attaquant veut rester dans le système même après redémarrage</p>
+    <p><strong>Technique :</strong> Il crée une clé de registre <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code> avec son malware</p>
+    <p><strong>Procédure :</strong> Il utilise un script PowerShell encodé en base64 pour masquer l'écriture dans le registre</p>
+    <p>→ Sysmon génère un <strong>Event ID 13</strong> (modification registre). Un mapping est réalisé sur MITRE ATT&CK : c'est <strong>T1547.001</strong>.</p>
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Niveau</th><th>Question</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>🎯 Tactique</td><td>Quel est l'objectif ?</td><td>Persistence (rester dans le système)</td></tr>
+      <tr><td>⚙️ Technique</td><td>Comment il s'y prend ?</td><td>Modifier le registre Windows Run</td></tr>
+      <tr><td>🔬 Procédure</td><td>Quel outil / quelle commande exacte ?</td><td>PowerShell encodé en base64</td></tr>
+    </tbody>
+  </table>
+
+  <div class="quiz">
+    <div class="quiz-label">// MINI-QUIZ</div>
+    <div class="quiz-q">Un attaquant utilise toujours Mimikatz pour voler des mots de passe en mémoire. À quel niveau TTP correspond l'utilisation spécifique de Mimikatz ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this, false, 'Non — la tactique c\'est l\'objectif général, ici : Credential Access.')">Tactique</button>
+      <button class="quiz-opt" onclick="answer(this, false, 'Pas tout à fait — la technique c\'est OS Credential Dumping (LSASS Memory). Mimikatz est encore plus précis.')">Technique</button>
+      <button class="quiz-opt" onclick="answer(this, true, 'Exact ! Mimikatz est l\'outil spécifique utilisé → c\'est la Procédure. La Technique serait "OS Credential Dumping (T1003.001)" et la Tactique "Credential Access".')">Procédure</button>
+    </div>
+    <div class="quiz-feedback" id="qf-c2"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C21 — IOC vs TTP
+═══════════════════════════════════ -->
+<div class="concept" id="c21">
+  <div class="concept-header">
+    <div class="concept-icon">⚔️</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 03 · DÉTECTION</div>
+      <div class="concept-title">IOC vs TTP — La différence fondamentale</div>
+      <div class="concept-subtitle">Pourquoi les deux sont indispensables</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c21')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    <strong>IOC = Statique</strong> → C'est une empreinte digitale figée. Facile à générer, facile à partager, mais aussi facile à contourner pour l'attaquant.<br><br>
+    <strong>TTP = Comportemental</strong> → C'est la façon de faire. Beaucoup plus difficile à changer. Un groupe APT garde ses habitudes pendant des années.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Critère</th><th>IOC</th><th>TTP</th></tr></thead>
+    <tbody>
+      <tr><td>Nature</td><td>Statique (hash, IP, domaine)</td><td>Comportemental (méthode d'attaque)</td></tr>
+      <tr><td>Durée de vie</td><td>Courte (quelques heures/jours)</td><td>Longue (mois, années)</td></tr>
+      <tr><td>Facilité à contourner</td><td>Très facile pour l'attaquant</td><td>Difficile — il faut changer de méthode</td></tr>
+      <tr><td>Utilité</td><td>Détection rapide d'attaques connues</td><td>Profilage d'attaquants sur le long terme</td></tr>
+      <tr><td>Exemple</td><td>IP 203.0.113.45</td><td>Utiliser PowerShell encodé pour l'évasion</td></tr>
+      <tr><td>Outil associé</td><td>VirusTotal, AbuseIPDB</td><td>MITRE ATT&CK Framework</td></tr>
+    </tbody>
+  </table>
+
+  <div class="analogy">
+    <div class="analogy-label">🎯 ANALOGIE — Braquer une banque</div>
+    <p>L'IOC c'est la <strong>plaque d'immatriculation de la voiture de fuite</strong> → changeable en 10 min. Le TTP c'est le fait qu'<strong>il déguise toujours ses complices en agents d'entretien, et attaque toujours le vendredi à 16h</strong> → ça, c'est son ADN d'attaquant.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C3 — MITRE ATT&CK
+═══════════════════════════════════ -->
+<div class="concept" id="c3">
+  <div class="concept-header">
+    <div class="concept-icon">🗺️</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 04 · FRAMEWORK</div>
+      <div class="concept-title">MITRE ATT&CK</div>
+      <div class="concept-subtitle">La carte mondiale des attaques réelles</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c3')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    MITRE ATT&CK est une <strong>base de données mondiale et gratuite</strong> qui répertorie toutes les tactiques et techniques utilisées par les vrais groupes de hackers, documentées à partir d'attaques réelles. C'est la <strong>Bible du SOC</strong>. Chaque technique a un identifiant unique (ex: T1059.001 = PowerShell).
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">📚 ANALOGIE — Le Larousse du crime</div>
+    <p>Imagine un dictionnaire qui recense <strong>toutes les techniques de tous les criminels du monde</strong>, classées par catégorie, avec des exemples d'utilisation réelle. MITRE ATT&CK c'est exactement ça, mais pour les hackers. Lorsqu’un comportement suspect est observé, ce référentiel permet d’identifier les acteurs susceptibles d’utiliser la technique ainsi que les réponses adaptées.</p>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">MITRE ATT&CK — STRUCTURE DES 14 TACTIQUES</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Les 14 étapes qu'un attaquant peut suivre (MITRE Enterprise)</span><br><br>
+<span class="prompt">TA0043</span> → Reconnaissance        <span class="comment"># Collecter infos sur la cible</span><br>
+<span class="prompt">TA0042</span> → Resource Development  <span class="comment"># Préparer l'infrastructure d'attaque</span><br>
+<span class="prompt">TA0001</span> → Initial Access         <span class="comment"># Entrer dans le réseau (phishing, exploit)</span><br>
+<span class="prompt">TA0002</span> → Execution              <span class="comment"># Exécuter du code malveillant</span><br>
+<span class="prompt">TA0003</span> → <span class="warn">Persistence</span>            <span class="comment"># Rester après redémarrage (registre, tâche)</span><br>
+<span class="prompt">TA0004</span> → Privilege Escalation  <span class="comment"># Devenir admin / SYSTEM</span><br>
+<span class="prompt">TA0005</span> → Defense Evasion       <span class="comment"># Contourner antivirus, EDR</span><br>
+<span class="prompt">TA0006</span> → <span class="err">Credential Access</span>     <span class="comment"># Voler mots de passe (Mimikatz)</span><br>
+<span class="prompt">TA0007</span> → Discovery              <span class="comment"># Explorer le réseau interne</span><br>
+<span class="prompt">TA0008</span> → Lateral Movement       <span class="comment"># Se déplacer vers d'autres machines</span><br>
+<span class="prompt">TA0009</span> → Collection              <span class="comment"># Collecter des données sensibles</span><br>
+<span class="prompt">TA0011</span> → C2 (Command & Control)  <span class="comment"># Communiquer avec le serveur hacker</span><br>
+<span class="prompt">TA0010</span> → Exfiltration            <span class="comment"># Envoyer les données volées</span><br>
+<span class="prompt">TA0040</span> → <span class="err">Impact</span>                 <span class="comment"># Ransomware, destruction de données</span>
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 SCÉNARIO — Mapper un incident sur ATT&CK</div>
+    <p>Sysmon génère un <strong>Event ID 1</strong> : processus <code>cmd.exe</code> lancé par <code>word.exe</code>. C'est suspect.</p>
+    <p>→ Une consultation de <strong>attack.mitre.org</strong> permet d’identifier : <strong>T1204.002</strong> — User Execution: Malicious File.</p>
+    <p>→ La tactique est <strong>Initial Access / Execution</strong>. C'est le début de la kill chain. Une alerte est alors qualifiée : exécution probable d’un document Office malveillant.</p>
+    <p>Ce mapping ATT&CK te permet de savoir exactement <strong>à quel stade se situe l’attaque</strong> et quelle est la prochaine étape probable.</p>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-label">// MINI-QUIZ</div>
+    <div class="quiz-q">Un attaquant crée une tâche planifiée Windows pour relancer son malware à chaque démarrage. Quelle tactique MITRE ATT&CK ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this, false, 'Non — l\'Impact c\'est la phase finale : ransomware, destruction. Là l\'attaquant cherche à rester dans le système.')">Impact</button>
+      <button class="quiz-opt" onclick="answer(this, true, 'Exact ! Créer une tâche planifiée = T1053.005 (Scheduled Task). La tactique est Persistence (TA0003). L\'attaquant s\'assure de rester même après redémarrage.')">Persistence</button>
+      <button class="quiz-opt" onclick="answer(this, false, 'Pas tout à fait — la Discovery c\'est explorer le réseau pour trouver d\'autres machines. Ici l\'attaquant s\'assure juste de rester.')">Discovery</button>
+    </div>
+    <div class="quiz-feedback" id="qf-c3"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C4 — D3FEND
+═══════════════════════════════════ -->
+<div class="concept" id="c4">
+  <div class="concept-header">
+    <div class="concept-icon">🛡️</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 05 · FRAMEWORK</div>
+      <div class="concept-title">MITRE D3FEND</div>
+      <div class="concept-subtitle">La réponse défensive à chaque attaque ATT&CK</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c4')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    <strong>D3FEND est le pendant défensif de ATT&CK</strong>. Pour chaque technique d'attaque documentée dans ATT&CK, D3FEND propose des contre-mesures concrètes. C'est le référentiel de la Blue Team.
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">🏰 ANALOGIE — L'art de la guerre et la défense</div>
+    <p>ATT&CK c'est le <strong>livre des stratégies d'attaque</strong> des envahisseurs. D3FEND c'est le <strong>manuel du défenseur</strong> qui dit : "Si l'ennemi utilise les échelles (technique d'attaque), alors construis des créneaux et verse de l'huile bouillante (contre-mesure)."</p>
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Attaque ATT&CK</th><th>Défense D3FEND</th></tr></thead>
+    <tbody>
+      <tr><td>T1003 — Credential Dumping (Mimikatz)</td><td>Credential Hardening, Protected Users Group</td></tr>
+      <tr><td>T1566 — Phishing</td><td>Email Filtering, User Training, DMARC</td></tr>
+      <tr><td>T1071 — C2 via HTTP</td><td>DNS Filtering, Proxy inspection TLS</td></tr>
+      <tr><td>T1547 — Persistence via Registre</td><td>Registry Monitoring (Sysmon ID 13)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C5 — KILL CHAIN
+═══════════════════════════════════ -->
+<div class="concept" id="c5">
+  <div class="concept-header">
+    <div class="concept-icon">🔄</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 06 · FRAMEWORK</div>
+      <div class="concept-title">Kill Chain</div>
+      <div class="concept-subtitle">Les 7 étapes d'une attaque (Lockheed Martin)</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c5')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    La <strong>Cyber Kill Chain</strong> modélise les 7 étapes qu'un attaquant suit de A à Z, depuis la reconnaissance jusqu'à l'impact final. <strong>Interrompre la chaîne à n'importe quelle étape = stopper l'attaque.</strong>
+  </div>
+
+  <div class="kill-chain">
+    <div class="kc-step"><div class="kc-num">01</div><div class="kc-icon">🔍</div><div class="kc-name">Reconnaissance</div><div class="kc-ex">OSINT, scan LinkedIn</div></div>
+    <div class="kc-step"><div class="kc-num">02</div><div class="kc-icon">🔧</div><div class="kc-name">Armement</div><div class="kc-ex">Créer le malware</div></div>
+    <div class="kc-step"><div class="kc-num">03</div><div class="kc-icon">📨</div><div class="kc-name">Livraison</div><div class="kc-ex">Email phishing</div></div>
+    <div class="kc-step"><div class="kc-num">04</div><div class="kc-icon">💥</div><div class="kc-name">Exploitation</div><div class="kc-ex">Click sur macro Word</div></div>
+    <div class="kc-step"><div class="kc-num">05</div><div class="kc-icon">🦠</div><div class="kc-name">Installation</div><div class="kc-ex">Malware s'installe</div></div>
+    <div class="kc-step"><div class="kc-num">06</div><div class="kc-icon">📡</div><div class="kc-name">C2</div><div class="kc-ex">Contact serveur hacker</div></div>
+    <div class="kc-step"><div class="kc-num">07</div><div class="kc-icon">🏴</div><div class="kc-name">Actions</div><div class="kc-ex">Exfiltration / Ransomware</div></div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 SCÉNARIO — Attaque réelle étape par étape</div>
+    <p><strong>Étape 1 — Reconna.</strong> : l'attaquant trouve le nom du DAF sur LinkedIn et son email pro.</p>
+    <p><strong>Étape 2 — Armement</strong> : il crée un fichier Excel avec une macro malveillante.</p>
+    <p><strong>Étape 3 — Livraison</strong> : il envoie un email "Facture urgente Q3" avec le fichier en pièce jointe.</p>
+    <p><strong>Étape 4 — Exploitation</strong> : le DAF clique "Activer les macros" → code malveillant s'exécute.</p>
+    <p><strong>Étape 5 — Installation</strong> : un malware s'installe et ajoute une tâche planifiée (persistance).</p>
+    <p><strong>Étape 6 — C2</strong> : le malware contacte <code>203.0.113.45:443</code> → Sysmon Event ID 3 détecté.</p>
+    <p><strong>Étape 7 — Impact</strong> : ransomware déployé sur tout le réseau 3 jours plus tard.</p>
+    <p>→ <strong>Le SOC aurait dû couper la chaîne à l'étape 6</strong> (détection C2) au plus tard !</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C6 — TLP
+═══════════════════════════════════ -->
+<div class="concept" id="c6">
+  <div class="concept-header">
+    <div class="concept-icon">🚦</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 07 · PROCESSUS</div>
+      <div class="concept-title">TLP — Traffic Light Protocol</div>
+      <div class="concept-subtitle">Qui a le droit de voir cette information ?</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c6')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Le <strong>TLP est un protocole de partage d'information</strong> utilisé dans tous les CERT et SOC du monde. Il définit jusqu'où une information peut être diffusée. Tout rapport d’incident ou toute alerte est associé à un niveau TLP de diffusion.
+  </div>
+
+  <div class="tlp-grid">
+    <div class="tlp-card tlp-red">
+      <div class="tlp-circle">🔴</div>
+      <div class="tlp-name" style="color:#ff6b6b">TLP:RED</div>
+      <div class="tlp-desc">Uniquement pour les destinataires nommés. NE PAS partager même en interne.</div>
+    </div>
+    <div class="tlp-card tlp-orange">
+      <div class="tlp-circle">🟠</div>
+      <div class="tlp-name" style="color:#f78166">TLP:AMBER</div>
+      <div class="tlp-desc">Limité à l'organisation et aux partenaires directs. Usage restreint.</div>
+    </div>
+    <div class="tlp-card tlp-green">
+      <div class="tlp-circle">🟢</div>
+      <div class="tlp-name" style="color:#3fb950">TLP:GREEN</div>
+      <div class="tlp-desc">Peut circuler dans la communauté cyber. Pas de diffusion publique.</div>
+    </div>
+    <div class="tlp-card tlp-white">
+      <div class="tlp-circle">⬜</div>
+      <div class="tlp-name" style="color:#7d8590">TLP:CLEAR</div>
+      <div class="tlp-desc">Information publique. Peut être partagée librement, même sur Internet.</div>
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 SCÉNARIO — Dans la vraie vie du SOC</div>
+    <p>L'ANSSI t'envoie un rapport sur un nouveau malware ciblant les hôpitaux. Il est taggué <strong>TLP:AMBER</strong>.</p>
+    <p>→ La diffusion interne vers le RSSI et les équipes IT concernées est autorisée.</p>
+    <p>→ La diffusion publique ou à des tiers non approuvés n’est pas autorisée.</p>
+    <p>→ Un IOC classifié <strong>TLP:RED</strong> demeure strictement limité aux destinataires nommés.</p>
+  </div>
+</div>
+
+
+
+<!-- ═══════════════════════════════════
+     C_NIST — NIST
+═══════════════════════════════════ -->
+<div class="concept" id="c_nist">
+  <div class="concept-header">
+    <div class="concept-icon">🇺🇸</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 08 · FRAMEWORK INTERNATIONAL</div>
+      <div class="concept-title">NIST — Cybersecurity Framework</div>
+      <div class="concept-subtitle">Gestion du risque, gouvernance, incident response et résilience</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_nist')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Le <strong>NIST Cybersecurity Framework (CSF)</strong> constitue un référentiel international majeur de pilotage du risque cyber. Il structure les capacités de sécurité autour de fonctions cohérentes qui permettent d’aligner gouvernance, sécurité opérationnelle, continuité d’activité et amélioration continue.
+  </div>
+
+  <div class="keypoints">
+    <div class="keypoint"><div class="keypoint-icon">🔎</div><div class="keypoint-title">Identify</div><div class="keypoint-desc">Inventaire des actifs, compréhension du contexte, cartographie des risques, dépendances critiques.</div></div>
+    <div class="keypoint"><div class="keypoint-icon">🛡️</div><div class="keypoint-title">Protect</div><div class="keypoint-desc">Contrôles d’accès, durcissement, segmentation, sensibilisation, sécurité des données et des services.</div></div>
+    <div class="keypoint"><div class="keypoint-icon">🚨</div><div class="keypoint-title">Detect</div><div class="keypoint-desc">Surveillance continue, use cases SIEM, EDR, corrélation, détection d’anomalies et threat intelligence.</div></div>
+    <div class="keypoint"><div class="keypoint-icon">⚡</div><div class="keypoint-title">Respond</div><div class="keypoint-desc">Gestion d’incident, coordination SOC/CERT, communication de crise, confinement, éradication et décisions.</div></div>
+    <div class="keypoint"><div class="keypoint-icon">🔄</div><div class="keypoint-title">Recover</div><div class="keypoint-desc">PRA, PCA, restauration, retour à la normale, validation de l’intégrité et amélioration post-incident.</div></div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 STRUCTURATION OPÉRATIONNELLE</div>
+    <p>Le NIST fournit une logique de pilotage lisible aussi bien pour la gouvernance que pour les opérations. Dans un environnement mature, l’inventaire des actifs et des risques relève de <strong>Identify</strong>, les contrôles préventifs de <strong>Protect</strong>, la supervision SOC de <strong>Detect</strong>, la gestion de crise et la réponse à incident de <strong>Respond</strong>, et les plans de reprise de <strong>Recover</strong>.</p>
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Publication</th><th>Objet</th><th>Usage principal</th></tr></thead>
+    <tbody>
+      <tr><td><a class="tool-link" href="https://www.nist.gov/cyberframework" target="_blank" rel="noopener noreferrer">NIST CSF</a></td><td>Cadre global de cybersécurité</td><td>Gouvernance, pilotage, alignement métier / cyber</td></tr>
+      <tr><td><a class="tool-link" href="https://csrc.nist.gov/publications/detail/sp/800-61/rev-2/final" target="_blank" rel="noopener noreferrer">NIST SP 800-61</a></td><td>Computer Security Incident Handling Guide</td><td>Réponse à incident, coordination, lifecycle de gestion</td></tr>
+      <tr><td><a class="tool-link" href="https://csrc.nist.gov/publications/detail/sp/800-37/rev-2/final" target="_blank" rel="noopener noreferrer">NIST SP 800-37</a></td><td>Risk Management Framework</td><td>Intégration de la sécurité dans les systèmes d’information</td></tr>
+      <tr><td><a class="tool-link" href="https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final" target="_blank" rel="noopener noreferrer">NIST SP 800-53</a></td><td>Security and Privacy Controls</td><td>Catalogue de contrôles de sécurité et de confidentialité</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    <strong>⚠️ Point stratégique :</strong> le NIST est particulièrement utile pour articuler la gouvernance, les contrôles, la réponse à incident et la résilience. Il complète très bien les logiques <strong>ISO/IEC 27001</strong>, <strong>ITIL</strong>, <strong>COBIT</strong> et les approches SOC orientées détection et réponse.
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C7 — SIEM
+═══════════════════════════════════ -->
+<div class="concept" id="c7">
+  <div class="concept-header">
+    <div class="concept-icon">📊</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 09 · OUTIL SOC</div>
+      <div class="concept-title">SIEM — Security Information & Event Management</div>
+      <div class="concept-subtitle">Plateforme centrale de corrélation et de supervision</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c7')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Le <strong>SIEM est le cœur du SOC</strong>. Il collecte, centralise et corrèle des millions de logs provenant de toutes les sources de l'entreprise (Windows, Linux, firewall, proxy, EDR...). Il applique des règles de détection pour générer des <strong>alertes</strong> quand un comportement suspect est détecté.
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">🎛️ ANALOGIE — La tour de contrôle de l'aéroport</div>
+    <p>Les contrôleurs aériens ne regardent pas chaque avion par la fenêtre. Ils ont <strong>des écrans qui agrègent les infos de TOUS les avions en même temps</strong> (radar, radio, plan de vol). Le SIEM c'est pareil : il agrège tous les "signaux" informatiques de l'entreprise et permet d’identifier l’événement nécessitant une investigation prioritaire.</p>
+  </div>
+
+  <div class="flow">
+    <div class="flow-step"><div class="flow-icon">🖥️</div><div class="flow-text"><strong>Sources</strong> : Windows Events, Linux Syslog, Firewall, Proxy, EDR, AD...</div></div>
+    <div class="flow-arrow">↓ Envoi des logs</div>
+    <div class="flow-step"><div class="flow-icon">⚙️</div><div class="flow-text"><strong>Ingestion & Normalisation</strong> : les logs sont parsés et mis au même format</div><div class="flow-tool">Logstash / Parsers</div></div>
+    <div class="flow-arrow">↓ Stockage</div>
+    <div class="flow-step"><div class="flow-icon">💾</div><div class="flow-text"><strong>Stockage indexé</strong> : millions d'événements stockés et indexés pour recherche rapide</div><div class="flow-tool">Elasticsearch</div></div>
+    <div class="flow-arrow">↓ Corrélation</div>
+    <div class="flow-step"><div class="flow-icon">🧠</div><div class="flow-text"><strong>Règles de corrélation</strong> : si 5 échecs de login en 30s → alerte Brute Force</div><div class="flow-tool">Règles SIGMA</div></div>
+    <div class="flow-arrow">↓ Alerte</div>
+    <div class="flow-step"><div class="flow-icon">🚨</div><div class="flow-text"><strong>Alerte générée</strong> → apparaît dans la file de l'analyste SOC</div><div class="flow-tool">Splunk / ELK / Sentinel</div></div>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">EXEMPLE DE RÈGLE SIEM — Détection Brute Force</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Règle de corrélation Splunk</span><br>
+<span class="highlight">index=windows EventCode=4625</span>  <span class="comment"># Login échoué</span><br>
+<span class="highlight">| stats count by src_ip, user, dest</span><br>
+<span class="highlight">| where count > 5</span>              <span class="comment"># Plus de 5 échecs</span><br>
+<span class="highlight">| eval timespan="30 minutes"</span><br><br>
+<span class="ok">→ ALERTE : Brute Force potentiel</span><br>
+<span class="ok">   Src IP : 198.51.100.42</span><br>
+<span class="ok">   Cible  : SRV-DC01 (Contrôleur de domaine)</span><br>
+<span class="warn">   Sévérité : HIGH — Escalader immédiatement</span>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-label">// MINI-QUIZ</div>
+    <div class="quiz-q">Le SIEM reçoit des logs d'un firewall montrant 1000 connexions bloquées depuis la même IP en 1 minute. Que fait le SIEM ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this, false, 'Non — bloquer automatiquement l\'IP, c\'est le rôle du SOAR (automatisation) ou de l\'IPS, pas du SIEM directement.')">Il bloque automatiquement l'IP</button>
+      <button class="quiz-opt" onclick="answer(this, true, 'Exact ! Le SIEM corrèle les 1000 événements, applique sa règle de détection (scan/DDoS potentiel) et génère une alerte pour l\'analyste. Bloquer = SOAR/IPS.')">Il génère une alerte pour l'analyste</button>
+      <button class="quiz-opt" onclick="answer(this, false, 'Non — le SIEM stocke et corrèle, mais il n\'envoie pas d\'email directement. C\'est le SOAR ou le système de ticketing qui gère ça.')">Il envoie un email à la direction</button>
+    </div>
+    <div class="quiz-feedback" id="qf-c7"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C8 — SOAR
+═══════════════════════════════════ -->
+<div class="concept" id="c8">
+  <div class="concept-header">
+    <div class="concept-icon">⚙️</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 10 · OUTIL SOC</div>
+      <div class="concept-title">SOAR — Security Orchestration, Automation & Response</div>
+      <div class="concept-subtitle">Automatisation et orchestration de la réponse</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c8')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Le <strong>SOAR automatise les réponses répétitives</strong> du SOC. Quand le SIEM génère une alerte, le SOAR peut exécuter automatiquement un <strong>playbook</strong> (scénario prédéfini) : bloquer une IP, isoler un poste, créer un ticket, envoyer une notification, rechercher l'IOC dans les bases de données... sans intervention humaine.
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">🤖 ANALOGIE — Le pilote automatique d'avion</div>
+    <p>Un analyste SOC qui fait les mêmes 20 actions manuelles pour chaque alerte de phishing perd un temps fou. Le SOAR c'est le <strong>pilote automatique</strong> qui gère les situations connues et simples, afin que l’analyste se concentre sur les turbulences vraiment dangereuses.</p>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 PLAYBOOK SOAR — Réponse automatique à un phishing</div>
+    <p><strong>Trigger</strong> : Un utilisateur signale un email suspect via le bouton "Report Phishing"</p>
+    <p><strong>Action 1</strong> : SOAR extrait automatiquement les IOC de l'email (URLs, IPs, hash des pièces jointes)</p>
+    <p><strong>Action 2</strong> : Vérifie chaque IOC sur VirusTotal, AbuseIPDB en 30 secondes</p>
+    <p><strong>Action 3</strong> : Si malveillant → isole automatiquement le poste de l'utilisateur via EDR</p>
+    <p><strong>Action 4</strong> : Bloque le domaine malveillant sur le proxy et le DNS</p>
+    <p><strong>Action 5</strong> : Crée un ticket dans SIRP avec tous les résultats pré-remplis</p>
+    <p><strong>Action 6</strong> : Transmet à l’analyste SOC un résumé complet</p>
+    <p>→ Tout ça en <strong>moins de 2 minutes</strong>, sans intervention humaine.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C9 — SIRP
+═══════════════════════════════════ -->
+<div class="concept" id="c9">
+  <div class="concept-header">
+    <div class="concept-icon">🧩</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 11 · OUTIL SOC</div>
+      <div class="concept-title">SIRP — Security Incident Response Platform</div>
+      <div class="concept-subtitle">Pilotage structuré des incidents</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c9')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Le <strong>SIRP est la plateforme de gestion des incidents de sécurité</strong>. C'est là où chaque incident est documenté, suivi, assigné à un analyste, et résolu. Il assure la traçabilité complète : qui a fait quoi, quand, avec quelle décision. L'outil de référence open source est <strong>TheHive</strong>.
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">📋 ANALOGIE — Le logiciel de gestion des urgences à l'hôpital</div>
+    <p>Quand un patient arrive aux urgences, une fiche est créée : état à l'arrivée, diagnostics, traitements, médecins impliqués. Le SIRP c'est exactement ça pour les incidents cyber : <strong>chaque "patient" (incident) a son dossier complet</strong>, suivi de A à Z.</p>
+  </div>
+
+  <div class="keypoints">
+    <div class="keypoint"><div class="keypoint-icon">🎫</div><div class="keypoint-title">Ticketing</div><div class="keypoint-desc">Chaque incident = un ticket avec priorité, statut, assignation</div></div>
+    <div class="keypoint"><div class="keypoint-icon">🔄</div><div class="keypoint-title">Workflow</div><div class="keypoint-desc">Étapes de traitement standardisées (Ouvert → En cours → Résolu)</div></div>
+    <div class="keypoint"><div class="keypoint-icon">📁</div><div class="keypoint-title">Observables</div><div class="keypoint-desc">IOC attachés à l'incident (IPs, hashes, domaines)</div></div>
+    <div class="keypoint"><div class="keypoint-icon">📊</div><div class="keypoint-title">Rapports</div><div class="keypoint-desc">Métriques MTTR (temps de résolution), tendances mensuelles</div></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C10 — EDR
+═══════════════════════════════════ -->
+<div class="concept" id="c10">
+  <div class="concept-header">
+    <div class="concept-icon">💻</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 12 · OUTIL SOC</div>
+      <div class="concept-title">EDR — Endpoint Detection & Response</div>
+      <div class="concept-subtitle">L'agent de surveillance sur chaque poste</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c10')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    L'<strong>EDR surveille en temps réel chaque PC et serveur</strong> (= endpoint). Contrairement à l'antivirus classique (qui cherche des signatures connues), l'EDR analyse les <strong>comportements</strong> : si un processus tente d'accéder à la mémoire de lsass.exe pour voler des mots de passe, l'EDR le détecte même si le malware est inconnu.
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">📹 ANALOGIE — La caméra de surveillance intelligente</div>
+    <p>L'antivirus c'est un garde qui compare chaque visiteur à une liste de criminels connus. L'EDR c'est une <strong>caméra IA qui analyse les comportements</strong> : si quelqu'un essaie d'ouvrir le coffre-fort à 3h du matin en portant des gants, l'alerte se déclenche même si cette personne n'est pas dans la liste des criminels.</p>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">EDR — ALERTE COMPORTEMENTALE</span>
+    </div>
+    <div class="terminal-body">
+<span class="err">[ALERTE CRITIQUE]</span> <span class="highlight">Crowdstrike Falcon EDR</span><br>
+<span class="comment">──────────────────────────────────────</span><br>
+Timestamp : 2025-03-15 02:34:17<br>
+Machine   : LAPTOP-COMPTA-03<br>
+User      : marie.dupont<br><br>
+<span class="warn">Comportement détecté :</span><br>
+  <span class="prompt">→</span> word.exe (PID 4821) a lancé cmd.exe<br>
+  <span class="prompt">→</span> cmd.exe a exécuté powershell.exe -enc [base64]<br>
+  <span class="prompt">→</span> powershell.exe a accédé à lsass.exe (mémoire)<br><br>
+<span class="err">VERDICT : Credential Dumping détecté</span><br>
+<span class="err">Technique MITRE : T1003.001 (LSASS Memory)</span><br>
+<span class="ok">Action  : Poste isolé automatiquement ✓</span>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-label">// MINI-QUIZ</div>
+    <div class="quiz-q">Un tout nouveau malware (inconnu des bases antivirus) tente d'injecter du code dans explorer.exe. Qui le détecte ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this, false, 'Non — l\'antivirus classique cherche des signatures de malwares connus. Un malware nouveau = 0 signature = non détecté.')">L'antivirus classique</button>
+      <button class="quiz-opt" onclick="answer(this, true, 'Exact ! L\'EDR analyse le COMPORTEMENT, pas les signatures. L\'injection de code dans explorer.exe est un comportement anormal → alerte, même pour un malware jamais vu.')">L'EDR</button>
+      <button class="quiz-opt" onclick="answer(this, false, 'Le firewall contrôle les flux réseau, pas les comportements internes des processus sur un poste.')">Le Firewall</button>
+    </div>
+    <div class="quiz-feedback" id="qf-c10"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C11 — XDR
+═══════════════════════════════════ -->
+<div class="concept" id="c11">
+  <div class="concept-header">
+    <div class="concept-icon">🌐</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 13 · OUTIL SOC</div>
+      <div class="concept-title">XDR — Extended Detection & Response</div>
+      <div class="concept-subtitle">L'EDR étendu à tout l'écosystème</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c11')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Le <strong>XDR va au-delà de l'EDR</strong> en corrélant les données de TOUS les vecteurs : endpoints, réseau, cloud, email, identité. Il donne une <strong>vision unifiée d'une attaque</strong> qui traverse plusieurs couches de l'infrastructure.
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 SCÉNARIO — Pourquoi l'XDR est supérieur à l'EDR seul</div>
+    <p>Avec <strong>EDR seul</strong> : un processus suspect est observé sur HOST-WS03, sans visibilité consolidée sur l’origine et l’étendue de l’attaque.</p>
+    <p>Avec <strong>XDR</strong> : la timeline complète devient accessible :</p>
+    <p>→ <strong>Email</strong> : phishing reçu et ouvert à 14h22</p>
+    <p>→ <strong>Endpoint</strong> : macro exécutée sur HOST-WS03 à 14h24</p>
+    <p>→ <strong>Réseau</strong> : connexion vers C2 à 14h26</p>
+    <p>→ <strong>Cloud</strong> : tentative d'accès à SharePoint depuis une IP suspecte à 14h30</p>
+    <p>→ <strong>AD</strong> : création d'un compte admin fantôme à 14h35</p>
+    <p>Le XDR t'offre le <strong>film complet de l'attaque</strong> en un seul écran.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C12 — SANDBOX
+═══════════════════════════════════ -->
+<div class="concept" id="c12">
+  <div class="concept-header">
+    <div class="concept-icon">🔬</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 14 · OUTIL SOC</div>
+      <div class="concept-title">Sandbox — Bac à sable</div>
+      <div class="concept-subtitle">Exécuter un virus sans risque</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c12')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    La <strong>sandbox est un environnement isolé et jetable</strong> dans lequel un fichier suspect peut être exécuté afin d’observer son comportement sans exposition du réseau réel. L’ensemble des actions y est enregistré ce que fait le fichier : connexions réseau, modifications de fichiers, clés de registre créées, processus lancés.
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">💣 ANALOGIE — Le robot démineur</div>
+    <p>Les artificiers ne manipulent pas eux-mêmes un engin suspect. Ils envoient un <strong>robot dans une zone sécurisée</strong> pour analyser la bombe. La sandbox c'est ce robot : elle "ouvre" le malware à ta place, dans une bulle imperméable. Si ça explose, seul le robot virtuel est détruit.</p>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 SCÉNARIO — Analyser un fichier suspect avec Any.run</div>
+    <p>Un email est reçu avec <code>bon_de_commande.pdf.exe</code>. Le fichier est chargé sur <strong>any.run</strong> (sandbox en ligne gratuite).</p>
+    <p>En 60 secondes, les éléments suivants sont obtenus :</p>
+    <p>→ Connexion vers <code>203.0.113.45:4444</code> (serveur C2)</p>
+    <p>→ Création de <code>C:\Users\AppData\Roaming\svchost32.exe</code></p>
+    <p>→ Clé registre ajoutée : <code>HKCU\Run\WindowsUpdate</code> (persistance)</p>
+    <p>→ Communication chiffrée (Cobalt Strike beacon détecté)</p>
+    <p>→ <strong>VERDICT</strong> : RAT (Remote Access Trojan). IOCs extraits et partagés en TLP:AMBER.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C17 — ELK
+═══════════════════════════════════ -->
+<div class="concept" id="c17">
+  <div class="concept-header">
+    <div class="concept-icon">🧬</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 15 · OUTIL SOC</div>
+      <div class="concept-title">ELK Stack</div>
+      <div class="concept-subtitle">Le SIEM open source — Elasticsearch + Logstash + Kibana</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c17')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    L'<strong>ELK Stack</strong> (aussi appelé Elastic Stack) est la combinaison de 3 outils open source qui forment ensemble un SIEM puissant et gratuit. C'est l'outil SOC le plus déployé dans les entreprises françaises.
+  </div>
+
+  <div class="keypoints">
+    <div class="keypoint"><div class="keypoint-icon">🔍</div><div class="keypoint-title">Elasticsearch</div><div class="keypoint-desc">Moteur de stockage et de recherche. Stocke des milliards de logs. Requêtes ultra-rapides.</div></div>
+    <div class="keypoint"><div class="keypoint-icon">⚙️</div><div class="keypoint-title">Logstash</div><div class="keypoint-desc">Le pipeline d'ingestion. Collecte, transforme et envoie les logs vers Elasticsearch.</div></div>
+    <div class="keypoint"><div class="keypoint-icon">📊</div><div class="keypoint-title">Kibana</div><div class="keypoint-desc">Interface visuelle permettant la recherche de logs, la création de tableaux de bord et la consultation des alertes.</div></div>
+    <div class="keypoint"><div class="keypoint-icon">📦</div><div class="keypoint-title">Beats/Agents</div><div class="keypoint-desc">Winlogbeat, Filebeat... Envoient les logs depuis chaque machine vers Logstash.</div></div>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">KIBANA — RECHERCHE DE LOGS SYSMON</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Recherche dans Kibana : tous les process suspects lancés par Word</span><br>
+<span class="highlight">event.code: 1</span> <span class="comment"># Sysmon Event ID 1 = Process Create</span><br>
+<span class="highlight">AND process.parent.name: "winword.exe"</span><br>
+<span class="highlight">AND NOT process.name: ("WINWORD.EXE" OR "splwow64.exe")</span><br><br>
+<span class="ok">→ 3 résultats trouvés :</span><br>
+<span class="warn">  cmd.exe      lancé par winword.exe  [SUSPECT]</span><br>
+<span class="warn">  powershell   lancé par winword.exe  [SUSPECT]</span><br>
+<span class="warn">  mshta.exe    lancé par winword.exe  [SUSPECT]</span><br><br>
+<span class="comment"># → Macro malveillante confirmée. Incident créé dans TheHive.</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C13 — IDS/IPS
+═══════════════════════════════════ -->
+<div class="concept" id="c13">
+  <div class="concept-header">
+    <div class="concept-icon">🔥</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 16 · RÉSEAU</div>
+      <div class="concept-title">IDS / IPS</div>
+      <div class="concept-subtitle">Détection et Prévention d'Intrusion Réseau</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c13')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    <strong>IDS (Intrusion Detection System)</strong> = surveille le trafic réseau et génère une alerte quand il détecte quelque chose de suspect. Il ne bloque rien.<br><br>
+    <strong>IPS (Intrusion Prevention System)</strong> = fait tout ce que fait l'IDS PLUS il bloque automatiquement le trafic malveillant en temps réel.
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">🚨 ANALOGIE — Alarme vs Videur</div>
+    <p><strong>IDS = l'alarme</strong> : elle sonne quand quelqu'un entre par effraction, mais elle n'empêche rien. <strong>IPS = le videur</strong> : il voit quelqu'un de suspect, il l'empêche d'entrer directement.</p>
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Critère</th><th>IDS</th><th>IPS</th></tr></thead>
+    <tbody>
+      <tr><td>Action</td><td>Détecte et alerte</td><td>Détecte, alerte ET bloque</td></tr>
+      <tr><td>Position réseau</td><td>En dérivation (copie du trafic)</td><td>En ligne (le trafic passe par lui)</td></tr>
+      <tr><td>Risque faux positif</td><td>Faible (alerte seulement)</td><td>Élevé (peut bloquer trafic légitime)</td></tr>
+      <tr><td>Exemple outil</td><td>Snort en mode détection</td><td>Suricata en mode prévention</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C14 — FIREWALL
+═══════════════════════════════════ -->
+<div class="concept" id="c14">
+  <div class="concept-header">
+    <div class="concept-icon">🧱</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 17 · RÉSEAU</div>
+      <div class="concept-title">Firewall — Pare-feu</div>
+      <div class="concept-subtitle">Le douanier du réseau</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c14')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Le <strong>firewall filtre le trafic réseau</strong> selon des règles : autoriser ou bloquer selon la source, la destination, le port et le protocole. C'est la première barrière de défense périmétrique.
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">🛂 ANALOGIE — Le douanier à la frontière</div>
+    <p>Il vérifie l'origine, la destination et le type de "marchandise". Il laisse passer le trafic HTTPS (port 443) depuis Internet, mais bloque le port RDP (3389) depuis l'extérieur. Il ne regarde pas LE CONTENU des valises (ça c'est le WAF ou l'IPS), juste QUI va OÙ avec QUOI.</p>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">RÈGLES FIREWALL TYPIQUES (pfSense / FortiGate)</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Règles de base d'un SOC</span><br>
+<span class="ok">ALLOW  ANY     → INTERNET   TCP 443 (HTTPS)</span><br>
+<span class="ok">ALLOW  ANY     → INTERNET   TCP 80  (HTTP)</span><br>
+<span class="err">BLOCK  INTERNET → ANY        TCP 3389 (RDP)</span>   <span class="comment"># No RDP externe</span><br>
+<span class="err">BLOCK  INTERNET → ANY        TCP 22   (SSH)</span>   <span class="comment"># No SSH externe</span><br>
+<span class="warn">ALERT  ANY     → C2_IPLIST  ANY</span>              <span class="comment"># IP malveillantes connues</span><br>
+<span class="err">BLOCK  ANY     → C2_IPLIST  ANY</span>              <span class="comment"># Bloque C2 connus</span>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ═══════════════════════════════════
+     C_NMAP — NMAP
+═══════════════════════════════════ -->
+<div class="concept" id="c_nmap">
+  <div class="concept-header">
+    <div class="concept-icon">🛰️</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 18 · RÉSEAU / AUDIT</div>
+      <div class="concept-title">Nmap</div>
+      <div class="concept-subtitle">Découverte réseau, ports ouverts, services, versions et surface d’attaque</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_nmap')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    <strong>Nmap</strong> est l’outil de référence pour la découverte réseau, l’identification des hôtes, la détection des ports ouverts, l’énumération des services et l’évaluation de la surface d’attaque. Il est utilisé en audit, en inventaire, en validation d’exposition, en pentest autorisé et en investigation.
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">EXEMPLES NMAP</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Découverte rapide des ports les plus connus</span><br>
+<span class="highlight">nmap -sS -T4 192.0.2.10</span><br><br>
+<span class="comment"># Détection de version et de service</span><br>
+<span class="highlight">nmap -sV 192.0.2.10</span><br><br>
+<span class="comment"># Scan réseau d'un sous-réseau</span><br>
+<span class="highlight">nmap -sn 192.0.2.0/24</span><br><br>
+<span class="comment"># Ports fréquents à surveiller</span><br>
+<span class="ok">22 SSH · 53 DNS · 80 HTTP · 443 HTTPS · 3389 RDP · 445 SMB</span>
+    </div>
+  </div>
+
+  <div class="warning">
+    <strong>⚠️ Usage :</strong> Nmap relève d’un cadre autorisé : inventaire interne, audit mandaté, laboratoire, validation technique ou test de sécurité approuvé.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     C_VPN — VPN
+═══════════════════════════════════ -->
+<div class="concept" id="c_vpn">
+  <div class="concept-header">
+    <div class="concept-icon">🔐</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 19 · RÉSEAU / ACCÈS DISTANT</div>
+      <div class="concept-title">VPN</div>
+      <div class="concept-subtitle">Tunnel chiffré, accès distant sécurisé, segmentation et exposition maîtrisée</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_vpn')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Un <strong>VPN</strong> établit un tunnel chiffré entre un poste, un site ou un utilisateur distant et l’infrastructure cible. Il protège la confidentialité des flux en transit, sécurise l’accès distant et évite d’exposer certains services sensibles directement sur Internet.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Type</th><th>Usage</th><th>Exemple</th></tr></thead>
+    <tbody>
+      <tr><td>Site-to-Site</td><td>Interconnexion sécurisée entre deux réseaux</td><td>Agence ↔ siège</td></tr>
+      <tr><td>Remote Access</td><td>Connexion sécurisée d’un utilisateur nomade</td><td>Télétravail, administrateur distant</td></tr>
+      <tr><td>SSL VPN</td><td>Accès via navigateur ou client dédié</td><td>Portail d’accès sécurisé</td></tr>
+      <tr><td>IPsec VPN</td><td>Chiffrement au niveau IP</td><td>Interconnexion d’équipements réseau</td></tr>
+    </tbody>
+  </table>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 BONNES PRATIQUES</div>
+    <p>Un VPN n’est pas une immunité. Une posture mature associe <strong>MFA</strong>, journalisation, restriction des accès, segmentation réseau, contrôle de conformité du poste, durcissement et supervision des connexions distantes.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     C_PROTO — TCP/IP
+═══════════════════════════════════ -->
+<div class="concept" id="c_proto">
+  <div class="concept-header">
+    <div class="concept-icon">📡</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 20 · RÉSEAU / PROTOCOLES</div>
+      <div class="concept-title">TCP/IP, protocoles réseau, ports importants et attaques associées</div>
+      <div class="concept-subtitle">Modèle réseau, flux, exposition, détection et hygiène de surface d’attaque</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_proto')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    La maîtrise réseau implique la compréhension du modèle <strong>TCP/IP</strong>, des protocoles applicatifs les plus courants, des ports critiques, des flux autorisés, des dépendances inter-systèmes et des attaques qui ciblent chaque couche. Cette lecture est essentielle en SOC, en architecture, en pentest et en investigation.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Port / protocole</th><th>Fonction</th><th>Risque typique</th></tr></thead>
+    <tbody>
+      <tr><td>22 / SSH</td><td>Administration distante</td><td>Brute force, credentials faibles, exposition excessive</td></tr>
+      <tr><td>53 / DNS</td><td>Résolution de noms</td><td>DNS tunneling, exfiltration, résolution vers domaines malveillants</td></tr>
+      <tr><td>80 / HTTP</td><td>Web non chiffré</td><td>Interception, injection, contenus non sécurisés</td></tr>
+      <tr><td>443 / HTTPS</td><td>Web chiffré</td><td>C2 sur HTTPS, phishing, abus d’applications web</td></tr>
+      <tr><td>445 / SMB</td><td>Partage Windows</td><td>Propagation latérale, ransomwares, exploitation de services exposés</td></tr>
+      <tr><td>3389 / RDP</td><td>Bureau distant</td><td>Brute force, exposition Internet, prise de contrôle à distance</td></tr>
+    </tbody>
+  </table>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 ATTAQUES FRÉQUENTES SUR LES FLUX</div>
+    <p>SYN scan, brute force sur services d’administration, exploitation d’application web, mouvements latéraux via SMB, exfiltration via DNS tunneling, utilisation de HTTPS pour masquer un canal C2, déni de service réseau ou applicatif, abus d’un port légitime à des fins malveillantes.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     C15 — PROXY
+═══════════════════════════════════ -->
+<div class="concept" id="c15">
+  <div class="concept-header">
+    <div class="concept-icon">🌍</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 21 · RÉSEAU</div>
+      <div class="concept-title">Proxy</div>
+      <div class="concept-subtitle">L'intermédiaire web qui voit tout</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c15')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Le <strong>proxy est un intermédiaire</strong> entre les utilisateurs et Internet. Tout le trafic web passe par lui. Il peut <strong>filtrer des sites</strong> (bloquer les réseaux sociaux, les sites de malware), <strong>journaliser toutes les connexions</strong> (qui a visité quoi et quand), et même inspecter le contenu (SSL inspection).
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 SOC — Pourquoi les logs proxy sont précieux</div>
+    <p>Un utilisateur est infecté par un malware. Celui-ci tente de contacter son serveur C2 via une requête DNS vers <code>update-microsoft-cdn.xyz</code>.</p>
+    <p>→ Le proxy bloque le domaine (liste noire) ET génère un log</p>
+    <p>→ Le SIEM reçoit le log et génère une alerte</p>
+    <p>→ Une recherche dans les logs proxy permet d’identifier les autres postes ayant tenté d’accéder au domaine</p>
+    <p>→ Douze autres postes compromis sont identifiés en quelques minutes</p>
+    <p>→ <strong>Les logs proxy = la mémoire de toute la navigation web de l'entreprise.</strong></p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C16 — WAF
+═══════════════════════════════════ -->
+<div class="concept" id="c16">
+  <div class="concept-header">
+    <div class="concept-icon">🛡️</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 22 · RÉSEAU</div>
+      <div class="concept-title">WAF — Web Application Firewall</div>
+      <div class="concept-subtitle">La protection des applications web</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c16')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Le <strong>WAF protège les applications web</strong> contre les attaques applicatives. Contrairement au firewall réseau qui filtre IP/ports, le WAF inspecte le <strong>contenu des requêtes HTTP</strong> pour détecter les tentatives d'injection SQL, XSS, path traversal, etc.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Attaque</th><th>Exemple de payload</th><th>WAF action</th></tr></thead>
+    <tbody>
+      <tr><td>SQL Injection</td><td><code>' OR '1'='1</code> dans un champ login</td><td>Bloque et alerte</td></tr>
+      <tr><td>XSS</td><td><code>&lt;script&gt;alert(1)&lt;/script&gt;</code> dans un commentaire</td><td>Bloque et sanitize</td></tr>
+      <tr><td>Path Traversal</td><td><code>../../etc/passwd</code> dans une URL</td><td>Bloque immédiatement</td></tr>
+      <tr><td>DDoS applicatif</td><td>10 000 requêtes/sec depuis une IP</td><td>Rate limiting + block</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C18 — WIRESHARK
+═══════════════════════════════════ -->
+<div class="concept" id="c18">
+  <div class="concept-header">
+    <div class="concept-icon">🔎</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 23 · RÉSEAU / OUTIL</div>
+      <div class="concept-title">Wireshark / Tshark</div>
+      <div class="concept-subtitle">Le microscope du trafic réseau</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c18')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    <strong>Wireshark capture et analyse les paquets réseau</strong> au niveau le plus bas. C'est l'outil de référence en forensic réseau et en analyse d'incident. Il te permet de voir exactement ce qui circule sur le réseau, paquet par paquet. <strong>Tshark</strong> est sa version ligne de commande pour automatiser l'analyse.
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">TSHARK — COMMANDES UTILES EN SOC</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Capturer tout le trafic sur eth0</span><br>
+<span class="highlight">tshark -i eth0 -w capture.pcap</span><br><br>
+<span class="comment"># Filtrer les connexions vers une IP suspecte</span><br>
+<span class="highlight">tshark -r capture.pcap -Y "ip.dst == 203.0.113.45"</span><br><br>
+<span class="comment"># Extraire tous les DNS queries (chercher domaines suspects)</span><br>
+<span class="highlight">tshark -r capture.pcap -Y "dns" -T fields -e dns.qry.name</span><br><br>
+<span class="ok">→ update-microsoft-cdn.xyz</span>   <span class="err">← SUSPECT !</span><br>
+<span class="ok">→ telemetry-update-win.com</span>    <span class="err">← SUSPECT !</span><br><br>
+<span class="comment"># → Domaine C2 identifié via l’analyse réseau</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C19 — n8n
+═══════════════════════════════════ -->
+<div class="concept" id="c19">
+  <div class="concept-header">
+    <div class="concept-icon">🔁</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 24 · AUTOMATISATION</div>
+      <div class="concept-title">n8n — Automatisation Low-Code</div>
+      <div class="concept-subtitle">Connecter les outils SOC et automatiser les flux</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c19')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    <strong>n8n est un outil d'automatisation low-code</strong> (open source) qui permet de créer des workflows visuels pour connecter des applications entre elles. Dans un SOC, il peut jouer le rôle d'un SOAR léger, ou automatiser des tâches répétitives entre tes outils.
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 WORKFLOW n8n — SOC automatisé pour débutant</div>
+    <p><strong>Trigger</strong> : SIEM génère une alerte → envoie un webhook HTTP à n8n</p>
+    <p><strong>Nœud 2</strong> : n8n extrait l'IP de l'alerte et appelle l'API AbuseIPDB</p>
+    <p><strong>Nœud 3</strong> : Si score > 80 → IP malveillante confirmée</p>
+    <p><strong>Nœud 4</strong> : Crée automatiquement un ticket dans TheHive</p>
+    <p><strong>Nœud 5</strong> : Envoie un message Slack au canal #soc-alerts</p>
+    <p><strong>Nœud 6</strong> : Envoie un email récapitulatif au RSSI</p>
+    <p>→ <strong>Tout ça sans écrire une seule ligne de code.</strong> n8n est gratuit et open source.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C20 — PYTHON
+═══════════════════════════════════ -->
+<div class="concept" id="c20">
+  <div class="concept-header">
+    <div class="concept-icon">🐍</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 25 · AUTOMATISATION</div>
+      <div class="concept-title">Python en cybersécurité</div>
+      <div class="concept-subtitle">Le couteau suisse de l'analyste SOC</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c20')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    <strong>Python est le langage numéro 1 en cybersécurité</strong>. Il te permet d'automatiser l'analyse de logs, d'appeler des APIs de threat intelligence, de parser des fichiers suspects, de créer tes propres outils SOC. Même 20 lignes de Python peuvent te faire gagner des heures de travail manuel.
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">PYTHON SOC — Script de vérification IOC</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Script Python : vérifier une liste d'IPs sur VirusTotal</span><br>
+<span class="highlight">import requests</span><br><br>
+API_KEY = <span class="warn">"VT_API_KEY_EXAMPLE"</span><br>
+IPS_SUSPECTES = [<span class="warn">"203.0.113.45"</span>, <span class="warn">"198.51.100.27"</span>]<br><br>
+<span class="highlight">for</span> ip <span class="highlight">in</span> IPS_SUSPECTES:<br>
+    url = f<span class="warn">"https://www.virustotal.com/api/v3/ip_addresses/{ip}"</span><br>
+    headers = {<span class="warn">"x-apikey"</span>: API_KEY}<br>
+    r = requests.get(url, headers=headers).json()<br>
+    score = r[<span class="warn">"data"</span>][<span class="warn">"attributes"</span>][<span class="warn">"last_analysis_stats"</span>]<br>
+    malicious = score[<span class="warn">"malicious"</span>]<br>
+    <span class="highlight">print</span>(f<span class="warn">"IP {ip} : {malicious} moteurs l'ont flagué MALVEILLANTE"</span>)<br><br>
+<span class="comment"># Output :</span><br>
+<span class="err">IP 203.0.113.45 : 47 moteurs l'ont flagué MALVEILLANTE</span><br>
+<span class="ok">IP 198.51.100.27   :  2 moteurs l'ont flagué MALVEILLANTE</span>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- ═══════════════════════════════════
+     C_SCRIPT — SCRIPTING CYBER
+═══════════════════════════════════ -->
+<div class="concept" id="c_script">
+  <div class="concept-header">
+    <div class="concept-icon">💻</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 26 · LANGAGES & AUTOMATISATION</div>
+      <div class="concept-title">Bash & PowerShell</div>
+      <div class="concept-subtitle">Automatisation, investigation, administration sécurisée, réponse à incident et forensic</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_script')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    <strong>Bash</strong> et <strong>PowerShell</strong> font partie des langages opérationnels incontournables en cybersécurité. Ils permettent d’automatiser des tâches répétitives, d’analyser des journaux, d’interroger les systèmes, de collecter des preuves, de vérifier des configurations, de lancer des contrôles de sécurité et d’accélérer les investigations en environnement Linux et Windows.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Langage</th><th>Environnement</th><th>Usages cyber</th></tr></thead>
+    <tbody>
+      <tr><td>Bash</td><td>Linux / Unix / Kali</td><td>Analyse de logs, scripts d’audit, pentest autorisé, forensic, inventaire, parsing, automatisation.</td></tr>
+      <tr><td>PowerShell</td><td>Windows / Active Directory / Microsoft</td><td>Administration sécurisée, collecte d’artefacts, investigation, réponse à incident, audit, automatisation SOC.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="resource-grid">
+    <div class="resource-card">
+      <div class="badge-mini">LINUX</div>
+      <h4><a class="tool-link" href="https://www.gnu.org/software/bash/" target="_blank" rel="noopener noreferrer">Bash</a></h4>
+      <p>Shell de référence en environnement Linux, central pour l’automatisation, la manipulation de fichiers, le parsing et l’exécution de commandes système.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">WINDOWS</div>
+      <h4><a class="tool-link" href="https://learn.microsoft.com/powershell/" target="_blank" rel="noopener noreferrer">PowerShell</a></h4>
+      <p>Langage d’automatisation et shell Microsoft, particulièrement utile pour l’administration, l’investigation Windows et les tâches orientées sécurité.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">PATTERNS</div>
+      <h4><a class="tool-link" href="https://learn.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference" target="_blank" rel="noopener noreferrer">Regex</a></h4>
+      <p>Compétence essentielle pour filtrer, extraire, normaliser et corréler des motifs dans des logs, chaînes, événements ou règles de détection.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">DÉTECTION</div>
+      <h4><a class="tool-link" href="https://virustotal.github.io/yara/" target="_blank" rel="noopener noreferrer">YARA</a></h4>
+      <p>Langage de règles largement utilisé pour la détection de malwares, familles de fichiers suspects et patterns techniques.</p>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">EXEMPLES OPÉRATIONNELS</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Bash — détection d’échecs SSH dans un journal Linux</span><br>
+<span class="highlight">grep "Failed password" /var/log/auth.log</span><br><br>
+<span class="comment"># Bash — rechercher des connexions sortantes</span><br>
+<span class="highlight">ss -tulnp</span><br><br>
+<span class="comment"># PowerShell — lister les processus gourmands</span><br>
+<span class="highlight">Get-Process | Where-Object {$_.CPU -gt 100}</span><br><br>
+<span class="comment"># PowerShell — événements de sécurité récents</span><br>
+<span class="highlight">Get-WinEvent -LogName Security -MaxEvents 20</span>
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 INTÉRÊT EN SOC / FORENSIC / ADMINISTRATION</div>
+    <p>Dans une posture cyber mature, ces langages permettent de dépasser l’usage purement graphique des outils. Ils apportent rapidité, reproductibilité, autonomie technique et capacité d’investigation. En entretien, leur maîtrise démontre une compréhension concrète des systèmes et une aptitude à opérer dans des environnements réels.</p>
+  </div>
+
+  <div class="warning">
+    <strong>⚠️ Point différenciant :</strong> un profil cybersécurité capable d’utiliser Bash et PowerShell avec méthode se distingue immédiatement d’un profil limité aux interfaces graphiques.
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C23 — THREAT INTELLIGENCE
+═══════════════════════════════════ -->
+<div class="concept" id="c23">
+  <div class="concept-header">
+    <div class="concept-icon">🌐</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 27 · THREAT INTELLIGENCE</div>
+      <div class="concept-title">Threat Intelligence — Sources, enrichissement et qualification</div>
+      <div class="concept-subtitle">Référentiels externes et outils d’exploitation opérationnelle</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c23')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    La <strong>Threat Intelligence</strong> désigne la collecte, la qualification, l’enrichissement et l’exploitation d’informations relatives aux menaces. Dans un environnement SOC, elle permet de contextualiser une alerte, de vérifier la réputation d’un IOC, d’identifier une infrastructure malveillante et d’accélérer la décision opérationnelle.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Outil / Référentiel</th><th>Usage principal</th><th>Apport opérationnel</th></tr></thead>
+    <tbody>
+      <tr><td><a class="tool-link" href="https://www.shodan.io" target="_blank" rel="noopener noreferrer">Shodan</a></td><td>Cartographie des services exposés</td><td>Analyse de surface d’exposition, bannières, ports, protocoles</td></tr>
+      <tr><td><a class="tool-link" href="https://search.censys.io" target="_blank" rel="noopener noreferrer">Censys</a></td><td>Cartographie d’actifs et certificats</td><td>Vision Internet-wide des hôtes, domaines, certificats et services</td></tr>
+      <tr><td><a class="tool-link" href="https://www.virustotal.com" target="_blank" rel="noopener noreferrer">VirusTotal</a></td><td>Réputation hash / IP / domaine / URL</td><td>Qualification multi-moteurs et enrichissement rapide d’un IOC</td></tr>
+      <tr><td><a class="tool-link" href="https://www.exploit-db.com" target="_blank" rel="noopener noreferrer">Exploit Database</a></td><td>Recherche d’exploits publics</td><td>Compréhension de l’exploitabilité d’une vulnérabilité connue</td></tr>
+      <tr><td><a class="tool-link" href="https://www.cve.org" target="_blank" rel="noopener noreferrer">CVE</a> / <a class="tool-link" href="https://nvd.nist.gov" target="_blank" rel="noopener noreferrer">NVD</a></td><td>Référentiel de vulnérabilités</td><td>Identification normalisée, scoring CVSS, métadonnées techniques</td></tr>
+      <tr><td><a class="tool-link" href="https://haveibeenpwned.com" target="_blank" rel="noopener noreferrer">HIBP</a></td><td>Vérification d’exposition d’identifiants</td><td>Qualification d’un risque de compromission par fuite connue</td></tr>
+      <tr><td><a class="tool-link" href="https://www.abuseipdb.com" target="_blank" rel="noopener noreferrer">AbuseIPDB</a></td><td>Réputation d’adresses IP</td><td>Validation d’un comportement hostile ou abusif rapporté</td></tr>
+      <tr><td><a class="tool-link" href="https://otx.alienvault.com" target="_blank" rel="noopener noreferrer">AlienVault OTX</a></td><td>IOC communautaires</td><td>Corrélation avec pulses, campagnes et observables partagés</td></tr>
+      <tr><td><a class="tool-link" href="https://lookup.icann.org" target="_blank" rel="noopener noreferrer">WHOIS / RDAP</a></td><td>Attribution domaine / ASN / titulaire</td><td>Qualification d’un domaine, d’un fournisseur ou d’une zone d’enregistrement</td></tr>
+    </tbody>
+  </table>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 SCÉNARIO — Enrichissement d’une alerte IOC</div>
+    <p>Une adresse IP est détectée dans un flux sortant suspect. La qualification opérationnelle peut s’appuyer sur <strong>VirusTotal</strong>, <strong>AbuseIPDB</strong> et <strong>AlienVault OTX</strong> pour la réputation, puis sur <strong>Shodan</strong> ou <strong>Censys</strong> pour caractériser l’infrastructure exposée. Si un service vulnérable est identifié, une recherche complémentaire dans <strong>CVE</strong>, <strong>NVD</strong> et <strong>Exploit Database</strong> permet d’évaluer l’exploitabilité et le risque associé.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     C24 — GITHUB & LABS
+═══════════════════════════════════ -->
+<div class="concept" id="c24">
+  <div class="concept-header">
+    <div class="concept-icon">💻</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 28 · DÉMONSTRATION TECHNIQUE</div>
+      <div class="concept-title">GitHub, laboratoires et référentiels techniques</div>
+      <div class="concept-subtitle">Capitalisation, versioning et démonstration de compétences</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c24')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    <strong>GitHub</strong> constitue un support de démonstration technique particulièrement pertinent pour la cybersécurité. Il permet d’exposer des scripts, des laboratoires, des configurations, des playbooks, des règles de détection et des environnements de test reproductibles, tout en conservant un historique de version exploitable.
+  </div>
+
+  <div class="keypoints">
+    <div class="keypoint"><div class="keypoint-icon">🧪</div><div class="keypoint-title">Labs reproductibles</div><div class="keypoint-desc">Publication de laboratoires Windows, ELK, Wazuh, Suricata, scripts Python</div></div>
+    <div class="keypoint"><div class="keypoint-icon">📁</div><div class="keypoint-title">Versioning</div><div class="keypoint-desc">Suivi des évolutions, correctifs, branches de test et documentation associée</div></div>
+    <div class="keypoint"><div class="keypoint-icon">📘</div><div class="keypoint-title">Documentation</div><div class="keypoint-desc">README, schémas, playbooks, procédures d’installation et d’usage</div></div>
+    <div class="keypoint"><div class="keypoint-icon">🛡️</div><div class="keypoint-title">Bonne pratique</div><div class="keypoint-desc">Aucune donnée réelle sensible, aucune IP privée personnelle, aucune clé API active</div></div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 SCÉNARIO — Démonstration de maîtrise technique</div>
+    <p>Un référentiel GitHub peut documenter un mini-SOC composé d’un poste Windows instrumenté avec <strong>Sysmon</strong>, d’une VM Ubuntu avec <strong>Wazuh</strong> ou <strong>ELK</strong>, d’un pipeline de collecte, ainsi que de scripts Python d’enrichissement IOC vers <strong>VirusTotal</strong> ou d’autres sources de Threat Intelligence. Ce type de dépôt démontre simultanément la capacité d’architecture, d’instrumentation, de centralisation et d’analyse.</p>
+    <p><a class="tool-link" href="https://github.com" target="_blank" rel="noopener noreferrer">Accès direct à GitHub</a></p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     C22 — TON RÔLE
+═══════════════════════════════════ -->
+<div class="concept" id="c22">
+  <div class="concept-header">
+    <div class="concept-icon">🎯</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 29 · VISION GLOBALE</div>
+      <div class="concept-title">Rôle de l'analyste SOC</div>
+      <div class="concept-subtitle">Vision consolidée des opérations de sécurité</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c22')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    En tant qu'<strong>analyste SOC</strong>, l’analyste SOC assume à la fois un rôle de <strong>détective</strong> (analyser les preuves), un <strong>technicien</strong> (maîtriser les outils), et un <strong>communicant</strong> (expliquer ce qui se passe). L’activité s’inscrit dans une chaîne d’outils orchestrée et complémentaire.
+  </div>
+
+  <div class="flow">
+    <div class="flow-step"><div class="flow-icon">📡</div><div class="flow-text"><strong>1. Collecte</strong> : Les agents envoient les logs de toutes les machines vers le SIEM</div><div class="flow-tool">Winlogbeat · Sysmon</div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step"><div class="flow-icon">🧠</div><div class="flow-text"><strong>2. Détection</strong> : Le SIEM corrèle, cherche des IOC, applique les règles SIGMA/ATT&CK</div><div class="flow-tool">ELK · Splunk · Sentinel</div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step"><div class="flow-icon">🚨</div><div class="flow-text"><strong>3. Alerte</strong> : Une alerte apparaît dans ta file → TU analyses</div><div class="flow-tool">SIEM Dashboard</div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step"><div class="flow-icon">🔬</div><div class="flow-text"><strong>4. Investigation</strong> : analyse des logs, vérification des IOC et mapping sur MITRE ATT&CK</div><div class="flow-tool">VirusTotal · Wireshark · Sandbox</div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step"><div class="flow-icon">⚙️</div><div class="flow-text"><strong>5. Réponse</strong> : Bloquer IP, isoler poste, créer ticket, alerter le N2</div><div class="flow-tool">SOAR · EDR · SIRP</div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step"><div class="flow-icon">📋</div><div class="flow-text"><strong>6. Documentation</strong> : Tout documenter dans TheHive, rapport d'incident</div><div class="flow-tool">TheHive · Confluence</div></div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step"><div class="flow-icon">📈</div><div class="flow-text"><strong>7. Amélioration</strong> : Créer de nouvelles règles SIEM, améliorer les playbooks SOAR</div><div class="flow-tool">Règles SIGMA · Playbooks</div></div>
+  </div>
+
+  <div class="definition" style="border-left-color: var(--green); margin-top: 24px;">
+    <strong style="color:var(--green)">🏆 Phrase clé dans un contexte d’entretien ou de présentation professionnelle contexte opérationnel / employeur :</strong><br><br>
+    "Je comprends le cycle complet d'un SOC : de la collecte de logs via Sysmon jusqu'à la réponse à incident. Je sais mapper une alerte sur le framework MITRE ATT&CK, distinguer un IOC d'un TTP, et j'ai une expérience pratique de configuration Sysmon pour détecter des techniques comme le Process Injection (Event ID 8) et le Lateral Movement (Event ID 3)."
+  </div>
+</div>
+
+
+
+
+<!-- ═══════════════════════════════════
+     C_EDR2 — EDR OUTILS RÉELS
+═══════════════════════════════════ -->
+<div class="concept" id="c_edr2">
+  <div class="concept-header">
+    <div class="concept-icon">🦅</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 30 · EDR — OUTILS ET EXEMPLES RÉELS</div>
+      <div class="concept-title">EDR — Les vrais outils du marché</div>
+      <div class="concept-subtitle">CrowdStrike · Microsoft Defender for Endpoint · SentinelOne · Wazuh</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_edr2')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Cette section présente des <strong>outils réellement utilisés en environnement professionnel</strong>, leurs différences, leurs forces respectives et leurs principaux contextes d’usage. Certains sont payants, d’autres gratuits et open source, ce qui les rend pertinents pour un laboratoire de démonstration technique.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>EDR</th><th>Éditeur</th><th>Prix</th><th>Points forts</th><th>Utilisé où</th></tr></thead>
+    <tbody>
+      <tr><td>🦅 CrowdStrike Falcon</td><td>CrowdStrike</td><td>~$15/poste/mois</td><td>IA comportementale, cloud-native, détection 0-day, threat hunting intégré</td><td>Grandes entreprises, CAC40</td></tr>
+      <tr><td>🛡️ Microsoft Defender for Endpoint (MDE)</td><td>Microsoft</td><td>Inclus M365 E5</td><td>Intégré Windows, XDR natif avec Sentinel, facile à déployer</td><td>Très répandu en France (PME, administrations)</td></tr>
+      <tr><td>🔵 SentinelOne</td><td>SentinelOne</td><td>~$8/poste/mois</td><td>IA autonome, rollback automatique post-ransomware, storyline visuelle</td><td>ETI, grandes entreprises</td></tr>
+      <tr><td>🟣 Carbon Black</td><td>VMware/Broadcom</td><td>Sur devis</td><td>Très orienté forensics, enregistre TOUT ce qui se passe sur le poste</td><td>Secteur financier, défense</td></tr>
+      <tr><td>🟢 Wazuh</td><td>Open Source</td><td>GRATUIT</td><td>SIEM + EDR + IDS intégré, communauté FR active, parfait pour lab</td><td>Lab perso, PME, SOC junior</td></tr>
+      <tr><td>🔶 OSSEC</td><td>Open Source</td><td>GRATUIT</td><td>Ancêtre de Wazuh, analyse de logs, intégrité fichiers</td><td>Lab, petites structures</td></tr>
+    </tbody>
+  </table>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">CROWDSTRIKE FALCON — ALERTE RÉELLE (format JSON simplifié)</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment">// Alerte CrowdStrike : Lateral Movement détecté</span><br>
+{<br>
+  <span class="highlight">"severity"</span>: <span class="warn">"CRITICAL"</span>,<br>
+  <span class="highlight">"tactic"</span>: <span class="warn">"Lateral Movement"</span>,<br>
+  <span class="highlight">"technique"</span>: <span class="warn">"T1021.001 — Remote Desktop Protocol"</span>,<br>
+  <span class="highlight">"host"</span>: <span class="warn">"DESKTOP-COMPTA03"</span>,<br>
+  <span class="highlight">"user"</span>: <span class="warn">"marie.dupont"</span>,<br>
+  <span class="highlight">"process"</span>: <span class="warn">"mstsc.exe → connexion vers SRV-DC01"</span>,<br>
+  <span class="highlight">"ioc_ip"</span>: <span class="warn">"192.168.1.50"</span>,<br>
+  <span class="highlight">"action"</span>: <span class="err">"BLOCKED + ISOLATED"</span><br>
+}<br><br>
+<span class="comment"># CrowdStrike a bloqué ET isolé le poste automatiquement</span><br>
+<span class="comment"># Cette alerte apparaît en temps réel dans la console Falcon</span>
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 WAZUH — EDR open source pertinent pour un laboratoire de démonstration</div>
+    <p><strong>Wazuh est la solution idéale pour apprendre</strong> : il combine EDR + SIEM + IDS en un seul outil gratuit et open source. Le déploiement peut être réalisé sur une VM Ubuntu avec connexion d’un poste Windows 11.</p>
+    <p><strong>Ce que Wazuh surveille sur Windows :</strong></p>
+    <p>→ Événements Windows Security (4624, 4625, 4688...)</p>
+    <p>→ Logs Sysmon (si installé)</p>
+    <p>→ Intégrité des fichiers système (FIM)</p>
+    <p>→ Processus suspects, connexions réseau anormales</p>
+    <p>→ Vulnérabilités connues (base CVE)</p>
+    <p><strong>Architecture de ton lab :</strong> <code>Windows 11 (agent Wazuh)</code> → envoie logs → <code>VM Ubuntu (Wazuh Manager + ELK)</code> → tableau de bord dans le navigateur</p>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">WAZUH — INSTALLATION RAPIDE SUR UBUNTU (lab)</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># 1. Installer Wazuh Manager + OpenSearch sur Ubuntu 22.04</span><br>
+<span class="highlight">curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh</span><br>
+<span class="highlight">sudo bash wazuh-install.sh -a</span><br><br>
+<span class="comment"># 2. Accéder à l'interface web</span><br>
+<span class="ok">https://IP_VM:443</span>  <span class="comment"># Login: admin / mot de passe généré</span><br><br>
+<span class="comment"># 3. Sur Windows 11 : installer l'agent Wazuh</span><br>
+<span class="comment"># Télécharger le .msi depuis packages.wazuh.com</span><br>
+<span class="comment"># Renseigner l’adresse IP du serveur manager Ubuntu</span><br><br>
+<span class="ok">→ Tes logs Windows arrivent dans Wazuh en 30 secondes !</span>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-label">// MINI-QUIZ</div>
+    <div class="quiz-q">Dans une PME à budget limité, Une PME souhaite déployer un EDR pour surveiller 10 postes Windows. Quelle solution est la plus pertinente ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this, false, 'CrowdStrike est excellent mais coûte ~$150/mois pour 10 postes. Pour une PME avec budget limité, il y a mieux.')">CrowdStrike Falcon</button>
+      <button class="quiz-opt" onclick="answer(this, true, 'Exact ! Wazuh est gratuit, open source, et offre EDR + SIEM + IDS intégré. Parfait pour une PME avec budget limité. Il surveille les logs Windows, Sysmon, et les comportements suspects.')">Wazuh (gratuit)</button>
+      <button class="quiz-opt" onclick="answer(this, false, 'SentinelOne est excellent mais facturé par poste. Pour une PME budget limité, Wazuh est la réponse.')">SentinelOne</button>
+    </div>
+    <div class="quiz-feedback" id="qf-c_edr2"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C_IDS2 — IDS/IPS OUTILS RÉELS
+═══════════════════════════════════ -->
+<div class="concept" id="c_ids2">
+  <div class="concept-header">
+    <div class="concept-icon">🔍</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 31 · IDS/IPS — SNORT, SURICATA, CISCO, ZEEK</div>
+      <div class="concept-title">IDS/IPS — Les vrais outils réseau</div>
+      <div class="concept-subtitle">Snort · Suricata · Cisco · Zeek · Palo Alto</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_ids2')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Cette section présente les <strong>outils concrets</strong> rencontrés en entreprise. Chacun dispose de spécificités, de forces propres et de cas d’usage réels.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Outil</th><th>Type</th><th>Prix</th><th>Mode de détection</th><th>Utilisation typique</th></tr></thead>
+    <tbody>
+      <tr><td>🐷 Snort 3</td><td>IDS/IPS</td><td>Gratuit (Cisco)</td><td>Signatures (règles .rules), protocoles réseau</td><td>Lab, PME, formation. Le plus connu, règles communautaires gratuites</td></tr>
+      <tr><td>⚡ Suricata</td><td>IDS/IPS/NSM</td><td>Gratuit (OISF)</td><td>Signatures + comportemental + TLS fingerprint</td><td>SOC enterprise, intégré dans OPNsense/pfSense, plus rapide que Snort</td></tr>
+      <tr><td>🦈 Zeek (ex-Bro)</td><td>NSM (analyse réseau)</td><td>Gratuit</td><td>Analyse comportementale du trafic, génère des logs structurés</td><td>Threat hunting, complément de Suricata, très utilisé en forensics</td></tr>
+      <tr><td>🔵 Cisco Firepower</td><td>NGFW + IPS</td><td>Payant (matériel)</td><td>Signatures Talos + ML + réputation IP</td><td>Grandes entreprises, secteur public français, opérateurs</td></tr>
+      <tr><td>🟠 Palo Alto NGFW</td><td>NGFW + IPS</td><td>Payant</td><td>App-ID, User-ID, WildFire sandbox intégrée</td><td>ETI/grands groupes, référence mondiale NGFW</td></tr>
+      <tr><td>🟢 Wazuh (module)</td><td>IDS/HIDS</td><td>Gratuit</td><td>Règles Sigma + comportemental + FIM</td><td>Lab, PME. Facile à déployer sur un poste Windows 11</td></tr>
+    </tbody>
+  </table>
+
+  <div class="definition" style="border-left-color: var(--orange); margin-top: 0;">
+    <strong style="color:var(--orange)">⚠️ SNORT vs SURICATA — La question d'entretien classique</strong><br><br>
+    <strong>Snort</strong> = monofil (single-threaded), plus simple, appartient maintenant à Cisco, règles Snort Community gratuites. Parfait pour apprendre.<br><br>
+    <strong>Suricata</strong> = multifil (multi-threaded), plus performant sur gros trafic, analyse TLS, génère des logs JSON (compatible ELK), supporte les mêmes règles Snort. <strong>Préféré en production aujourd'hui.</strong>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">SURICATA — RÈGLE DE DÉTECTION (format Snort/Suricata)</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Règle Suricata : détecter un scan Nmap</span><br>
+<span class="highlight">alert</span> tcp any any <span class="highlight">-></span> $HOME_NET any (<br>
+  <span class="warn">msg</span>:"Nmap SYN Scan détecté";<br>
+  <span class="warn">flags</span>:S;<br>
+  <span class="warn">threshold</span>: type both, track by_src, count 20, seconds 1;<br>
+  <span class="warn">classtype</span>:network-scan;<br>
+  <span class="warn">sid</span>:1000001; <span class="warn">rev</span>:1;<br>
+);<br><br>
+<span class="comment"># → Si 20 SYN sans ACK en 1 seconde depuis la même IP = scan de ports</span><br>
+<span class="ok">→ Suricata génère une alerte et l'envoie dans ELK/Wazuh</span><br><br>
+<span class="comment"># Règle pour détecter un téléchargement EXE suspect via HTTP</span><br>
+<span class="highlight">alert</span> http $HOME_NET any <span class="highlight">-></span> $EXTERNAL_NET any (<br>
+  <span class="warn">msg</span>:"Téléchargement EXE depuis HTTP non chiffré";<br>
+  <span class="warn">http.uri</span>; <span class="warn">content</span>:".exe"; <span class="warn">endswith</span>;<br>
+  <span class="warn">sid</span>:1000002; <span class="warn">rev</span>:1;<br>
+);
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">ZEEK — LOGS RÉSEAU STRUCTURÉS (parfait pour SIEM)</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Zeek génère des logs structurés par type de trafic</span><br>
+<span class="comment"># conn.log — toutes les connexions réseau</span><br>
+<span class="highlight">ts            id.orig_h     id.resp_h      proto  service  bytes</span><br>
+<span class="ok">1710000001    198.51.100.42  203.0.113.45  tcp    -        48320</span><br><br>
+<span class="comment"># dns.log — toutes les requêtes DNS</span><br>
+<span class="highlight">ts            query                        qtype   answer</span><br>
+<span class="warn">1710000015    update-microsoft-cdn.xyz     A       203.0.113.45</span><br><br>
+<span class="comment"># http.log — trafic HTTP clair</span><br>
+<span class="highlight">ts            host                  uri              method</span><br>
+<span class="err">1710000032    malware-drops.ru      /payload.exe     GET</span><br><br>
+<span class="comment"># → Ces logs JSON sont injectés dans ELK pour corrélation</span>
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 ARCHITECTURE SOC — Comment Snort/Suricata s'intègre</div>
+    <p><strong>Réseau entreprise :</strong> Tout le trafic passe par un routeur ou switch core.</p>
+    <p>→ Un <strong>port miroir (SPAN)</strong> copie tout le trafic vers le serveur Suricata</p>
+    <p>→ Suricata analyse chaque paquet contre ses règles</p>
+    <p>→ Les alertes sont envoyées en JSON vers <strong>Logstash (ELK)</strong></p>
+    <p>→ Kibana affiche les alertes en temps réel</p>
+    <p>→ L’analyste SOC observe alors : <code>"Nmap scan depuis 198.51.100.42 vers SRV-DC01"</code></p>
+    <p><strong>Dans un laboratoire de démonstration :</strong> Il est possible de déployer Suricata sur une VM Ubuntu afin d’analyser le trafic généré par un poste Windows.</p>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-label">// MINI-QUIZ</div>
+    <div class="quiz-q">Suricata est configuré en mode IPS (inline). Un paquet malveillant détecté par une règle arrive sur le réseau. Que se passe-t-il ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this, false, 'En mode IPS, Suricata agit AVANT que le paquet atteigne la cible. En mode IDS (passif), il aurait juste alerté.')">Il génère une alerte mais le paquet passe quand même</button>
+      <button class="quiz-opt" onclick="answer(this, true, 'Exact ! En mode IPS inline, Suricata est dans le flux réseau. Il analyse le paquet AVANT qu'il atteigne la destination et le BLOQUE si une règle correspond. Le trafic légitime passe normalement.')">Il bloque le paquet avant qu'il atteigne la cible</button>
+      <button class="quiz-opt" onclick="answer(this, false, 'Suricata n'est pas un antivirus. Il ne met pas en quarantaine les fichiers, il bloque les flux réseau suspects.')">Il met le fichier en quarantaine</button>
+    </div>
+    <div class="quiz-feedback" id="qf-c_ids2"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C_WIN11 — WINDOWS 11 HOME NATIF
+═══════════════════════════════════ -->
+<div class="concept" id="c_win11">
+  <div class="concept-header">
+    <div class="concept-icon">🪟</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 32 · TON PC WINDOWS 11 HOME</div>
+      <div class="concept-title">Logs natifs Windows 11 Home + Sysmon</div>
+      <div class="concept-subtitle">Tout ce qui tourne déjà sur ta machine</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_win11')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    <strong>Bonne nouvelle : un poste Windows 11 Home génère déjà des centaines de logs de sécurité par heure.</strong> La plupart des gens (et même des informaticiens) ne savent pas qu'ils ont un vrai système de télémétrie de sécurité natif. Voici les briques déjà présentes et les moyens d’y accéder.
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">📦 ANALOGIE — La boîte noire de l'avion</div>
+    <p>Windows 11 peut être comparé à un appareil disposant de <strong>sa propre boîte noire qui enregistre tout</strong> en permanence. La plupart des pilotes n'y regardent jamais tant que tout va bien. Toi, en tant qu'analyste SOC en formation, la lecture de cette boîte noire devient un objectif de maîtrise progressive.</p>
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Source de logs</th><th>Où trouver</th><th>Ce qu'il contient</th><th>Event IDs importants</th></tr></thead>
+    <tbody>
+      <tr><td>📋 Windows Event Log (Security)</td><td>Observateur d'événements → Journaux Windows → Sécurité</td><td>Connexions, authentifications, privilèges, audit</td><td>4624 (login OK), 4625 (login KO), 4648 (RunAs), 4688 (process créé)</td></tr>
+      <tr><td>📋 Windows Event Log (System)</td><td>Observateur d'événements → Journaux Windows → Système</td><td>Démarrage, arrêt, drivers, services</td><td>7045 (nouveau service), 6005/6006 (démarrage/arrêt OS)</td></tr>
+      <tr><td>📋 Windows Event Log (Application)</td><td>Observateur d'événements → Journaux Windows → Application</td><td>Erreurs applicatives, crashs, installations</td><td>Variable selon l'application</td></tr>
+      <tr><td>🔵 Windows Defender Logs</td><td>Observateur → Journaux Microsoft → Windows → Windows Defender</td><td>Détections malware, actions (quarantaine, suppression)</td><td>1116 (malware détecté), 1117 (action prise), 5001 (protection temps réel désactivée)</td></tr>
+      <tr><td>🔥 Windows Firewall Logs</td><td>C:\Windows\System32\LogFiles\Firewall\pfirewall.log</td><td>Connexions bloquées/autorisées par le pare-feu Windows</td><td>Format texte : DROP/ALLOW par IP/port</td></tr>
+      <tr><td>🟣 PowerShell Script Block Logging</td><td>Observateur → Microsoft → Windows → PowerShell → Operational</td><td>Tout le code PowerShell exécuté sur la machine</td><td>4104 (script block exécuté), 4103 (module logging)</td></tr>
+      <tr><td>🌐 DNS Client Logs</td><td>Observateur → Microsoft → Windows → DNS Client Events</td><td>Toutes les résolutions DNS de la machine</td><td>3008 (requête DNS), utile pour détecter C2</td></tr>
+      <tr><td>🔧 Sysmon (installé par toi)</td><td>Observateur → Journaux Applications et Services → Microsoft → Windows → Sysmon</td><td>Processus, réseau, registre, fichiers, pipes — niveau expert</td><td>1 (process), 3 (réseau), 8 (injection), 11 (fichier), 13 (registre)</td></tr>
+      <tr><td>🛡️ AMSI (Antimalware Scan)</td><td>Observateur → Microsoft → Windows → AMSI</td><td>Scripts PowerShell/VBS/JS soumis à l'analyse antimalware</td><td>1101, 1102 — détections de scripts malveillants</td></tr>
+      <tr><td>🔒 BitLocker</td><td>Observateur → Microsoft → Windows → BitLocker-API</td><td>Chiffrement/déchiffrement, accès clé de récupération</td><td>Utile pour forensics sur vols de disque</td></tr>
+    </tbody>
+  </table>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">POWERSHELL — ACCÉDER AUX LOGS WINDOWS (en tant qu'admin)</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Voir les 20 derniers événements de sécurité</span><br>
+<span class="highlight">Get-WinEvent</span> -LogName Security -MaxEvents 20 | <span class="highlight">Format-List</span><br><br>
+<span class="comment"># Chercher tous les échecs de connexion (brute force ?)</span><br>
+<span class="highlight">Get-WinEvent</span> -LogName Security | <span class="highlight">Where-Object</span> {$_.Id -eq 4625}<br><br>
+<span class="comment"># Voir les logs Sysmon</span><br>
+<span class="highlight">Get-WinEvent</span> -LogName "Microsoft-Windows-Sysmon/Operational" -MaxEvents 50<br><br>
+<span class="comment"># Chercher les processus créés (Event ID 1 Sysmon)</span><br>
+<span class="highlight">Get-WinEvent</span> -LogName "Microsoft-Windows-Sysmon/Operational" | <br>
+  <span class="highlight">Where-Object</span> {$_.Id -eq 1} | <span class="highlight">Select-Object</span> -First 10<br><br>
+<span class="comment"># Voir les logs Windows Defender</span><br>
+<span class="highlight">Get-WinEvent</span> -LogName "Microsoft-Windows-Windows Defender/Operational" | <br>
+  <span class="highlight">Where-Object</span> {$_.Id -in @(1116,1117)} | <span class="highlight">Format-List</span>
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 ACCÈS RAPIDE — Comment explorer les logs maintenant</div>
+    <p><strong>Méthode graphique (Observateur d'événements) :</strong></p>
+    <p>→ Appuie sur <code>Win + R</code> → tape <code>eventvwr.msc</code> → Entrée</p>
+    <p>→ Navigue dans "Journaux Windows → Sécurité"</p>
+    <p>→ Clique sur "Filtrer le journal actuel" → entre <code>4625</code> pour voir les échecs de login</p>
+    <p><strong>Méthode Event Viewer pour Sysmon :</strong></p>
+    <p>→ "Journaux des applications et des services → Microsoft → Windows → Sysmon → Operational"</p>
+    <p><strong>Pour activer le logging PowerShell (désactivé par défaut) :</strong></p>
+    <p>→ <code>Win + R</code> → <code>gpedit.msc</code> (Non dispo sur Home, utilise regedit)</p>
+    <p>→ <code>HKLM\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging</code> → <code>EnableScriptBlockLogging = 1</code></p>
+  </div>
+
+  <div class="warning">
+    <strong>⚠️ Windows 11 HOME vs PRO/Enterprise :</strong> Home a des limitations importantes. L'Observateur d'événements de sécurité est plus pauvre (moins d'audit activé par défaut), gpedit.msc n'existe pas, et certains Event IDs nécessitent une configuration manuelle via regedit. En environnement d’entreprise, ces mécanismes sont généralement pilotés sur des éditions Pro ou Enterprise via GPO.
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-label">// MINI-QUIZ</div>
+    <div class="quiz-q">Sur un poste Windows 11 Home, 50 Event ID 4625 sont observés en 2 minutes pour le même compte. Quelle interprétation opérationnelle convient ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this, false, 'C'est possible mais peu probable. 50 tentatives en 2 minutes c'est une attaque automatisée, pas un humain qui se trompe.')">Un utilisateur qui a oublié son mot de passe</button>
+      <button class="quiz-opt" onclick="answer(this, true, 'Exact ! 50 échecs en 2 minutes = attaque par force brute (Brute Force). C'est un comportement automatisé. Si c'est sur un poste connecté à Internet, quelqu'un tente de s'introduire. Si c'est en interne, peut-être un mouvement latéral d'un attaquant déjà dans le réseau.')">Une attaque par force brute (Brute Force)</button>
+      <button class="quiz-opt" onclick="answer(this, false, 'Un virus peut exécuter des processus mais pas forcément des tentatives de connexion répétées. L'Event ID 4625 spécifique indique un problème d'authentification.')">Un virus qui tourne en arrière-plan</button>
+    </div>
+    <div class="quiz-feedback" id="qf-c_win11"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C_DEFENDER — WINDOWS DEFENDER ET OUTILS NATIFS
+═══════════════════════════════════ -->
+<div class="concept" id="c_defender">
+  <div class="concept-header">
+    <div class="concept-icon">🛡️</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 33 · WINDOWS DEFENDER & OUTILS NATIFS WIN11</div>
+      <div class="concept-title">Windows Defender — EDR natif intégré</div>
+      <div class="concept-subtitle">Defender Antivirus · Firewall · SmartScreen · Credential Guard · BitLocker</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_defender')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    <strong>Windows Defender n'est plus juste un antivirus basique.</strong> Depuis Windows 10, Microsoft a transformé Defender en une suite de sécurité complète. Un poste Windows 11 Home dispose déjà de plusieurs couches de protection actives sans ajout logiciel. Voici une vue consolidée de ces briques.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Composant</th><th>Rôle</th><th>Où il logue</th><th>Niveau de protection</th></tr></thead>
+    <tbody>
+      <tr><td>🦠 Defender Antivirus</td><td>Détection malware par signatures + heuristique + ML cloud (MAPS). Analyse temps réel, planifiée, et à la demande</td><td>Observateur → Defender/Operational. IDs 1116, 1117, 1118, 1119</td><td>Correct pour débutant. Mis à jour automatiquement</td></tr>
+      <tr><td>🔥 Windows Defender Firewall</td><td>Pare-feu réseau bidirectionnel. Bloque/autorise par app, port, IP. 3 profils : Domaine, Privé, Public</td><td>C:\Windows\System32\LogFiles\Firewall\pfirewall.log (à activer)</td><td>Basique mais efficace. Bloque les scans de port entrants par défaut</td></tr>
+      <tr><td>🌐 SmartScreen</td><td>Vérifie réputation des fichiers téléchargés et des URLs dans Edge. Bloque les exécutables inconnus</td><td>Observateur → SmartScreen. Popup d'avertissement à l'utilisateur</td><td>Très utile contre les téléchargements malveillants</td></tr>
+      <tr><td>🧠 Core Isolation / Memory Integrity</td><td>Isole les processus critiques du noyau dans une VM hyperviseur (VBS). Empêche les rootkits noyau</td><td>Activé/désactivé dans Sécurité Windows → Sécurité des appareils</td><td>Élevé. Bloque les drivers malveillants non signés</td></tr>
+      <tr><td>🔑 Windows Credential Guard</td><td>Protège les hachages NTLM et tickets Kerberos dans une enclave sécurisée. Empêche Mimikatz de lire LSASS</td><td>Pas de logs directs mais Sysmon détecte les tentatives échouées</td><td>Très élevé — disponible en Home mais limité</td></tr>
+      <tr><td>🔒 BitLocker</td><td>Chiffrement complet du disque. Sans le TPM ou le PIN, impossible d'accéder aux données hors-ligne</td><td>Observateur → BitLocker-API. Clé dans compte Microsoft si Home</td><td>Élevé pour le vol physique de machine</td></tr>
+      <tr><td>🛡️ Exploit Protection</td><td>Atténue les exploits (DEP, ASLR, CFG, SEHOP...). Héritage de EMET de Microsoft</td><td>Sécurité Windows → Contrôle des applications et du navigateur</td><td>Élevé contre les exploits mémoire</td></tr>
+      <tr><td>🔵 AMSI (Antimalware Scan Interface)</td><td>Intercepte et soumet à Defender TOUS les scripts exécutés : PowerShell, VBScript, JavaScript, macros Office</td><td>Observateur → AMSI/Operational. IDs 1101, 1102</td><td>Crucial — bloque les scripts malveillants en mémoire</td></tr>
+      <tr><td>📊 Defender for Endpoint (MDE)</td><td>Version entreprise de Defender = vrai EDR avec threat hunting, investigation timeline, isolation réseau. NON DISPO sur Home</td><td>Microsoft 365 Security Center (cloud)</td><td>Très élevé — équivalent CrowdStrike/SentinelOne</td></tr>
+    </tbody>
+  </table>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">POWERSHELL — INTERROGER WINDOWS DEFENDER</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Vérifier le statut de Defender</span><br>
+<span class="highlight">Get-MpComputerStatus</span> | Select-Object AntivirusEnabled, RealTimeProtectionEnabled,<br>
+  AntivirusSignatureLastUpdated, AMEngineVersion<br><br>
+<span class="comment"># Voir les dernières détections de malware</span><br>
+<span class="highlight">Get-MpThreatDetection</span> | Select-Object ThreatName, ActionSuccess, <br>
+  DetectionTime, Resources<br><br>
+<span class="comment"># Lancer un scan rapide manuellement</span><br>
+<span class="highlight">Start-MpScan</span> -ScanType QuickScan<br><br>
+<span class="comment"># Vérifier si Memory Integrity (Core Isolation) est activé</span><br>
+<span class="highlight">Get-CimInstance</span> -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard |<br>
+  Select-Object VirtualizationBasedSecurityStatus<br><br>
+<span class="comment"># Activer le logging du pare-feu Windows</span><br>
+<span class="highlight">netsh</span> advfirewall set allprofiles logging droppedconnections enable<br>
+<span class="highlight">netsh</span> advfirewall set allprofiles logging filename <span class="warn">"%systemroot%\system32\LogFiles\Firewall\pfirewall.log"</span>
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 SCÉNARIO — Defender détecte Mimikatz sur ton lab</div>
+    <p>Un échantillon de démonstration tel que Mimikatz peut être étudié exclusivement dans un laboratoire isolé et autorisé.</p>
+    <p>→ SmartScreen bloque le téléchargement immédiatement</p>
+    <p>→ En cas d’exécution forcée, Defender détecte la signature à l’extraction : <strong>Event ID 1116</strong> ("HackTool:Win32/Mimikatz")</p>
+    <p>→ Defender met le fichier en quarantaine : <strong>Event ID 1117</strong> (action de remédiation)</p>
+    <p>→ AMSI intercepte l’exécution de commandes PowerShell liées à Mimikatz</p>
+    <p><strong>Pour contourner Defender dans ton lab :</strong> ajouter une exclusion dans Sécurité Windows → Protection contre les virus et les menaces → Gérer les paramètres → Exclusions. <em>Ne faire ça QUE dans un environnement de lab isolé !</em></p>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-label">// MINI-QUIZ</div>
+    <div class="quiz-q">Un attaquant exécute un script PowerShell malveillant encodé en base64 sur un poste Windows 11. Quel mécanisme natif Windows l'intercepte et le soumet à Defender pour analyse ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this, false, 'Le Firewall filtre les connexions réseau, pas le code qui s'exécute localement.')">Windows Defender Firewall</button>
+      <button class="quiz-opt" onclick="answer(this, false, 'SmartScreen vérifie la réputation des fichiers téléchargés, pas les scripts exécutés en mémoire depuis PowerShell.')">SmartScreen</button>
+      <button class="quiz-opt" onclick="answer(this, true, 'Exact ! AMSI (Antimalware Scan Interface) est l'interface qui s'intercale entre PowerShell (et VBScript, JavaScript, macros Office) et l'exécution. Avant que le script tourne, AMSI l'envoie à Defender pour analyse. Même un script encodé en base64 est décodé et analysé par AMSI.')">AMSI (Antimalware Scan Interface)</button>
+    </div>
+    <div class="quiz-feedback" id="qf-c_defender"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C_CENTRALIZE — CENTRALISER LES LOGS
+═══════════════════════════════════ -->
+<div class="concept" id="c_centralize">
+  <div class="concept-header">
+    <div class="concept-icon">🔗</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 34 · CENTRALISER TOUS TES LOGS — GUIDE COMPLET</div>
+      <div class="concept-title">Centraliser les logs de un poste Windows 11</div>
+      <div class="concept-subtitle">De zéro à ton propre mini-SOC en 3 architectures</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_centralize')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    <strong>Centraliser les logs = envoyer tous tes événements Windows vers un seul endroit</strong> où il devient possible de les rechercher, de les corréler et de créer des alertes. C'est exactement ce que font les vrais SOC. Il existe 3 niveaux de complexité selon les ressources disponibles et les objectifs de supervision.
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">📡 ANALOGIE — Le centre d'appels</div>
+    <p>Imagine que chaque composant de sécurité de ton PC (Defender, Firewall, Sysmon, Événements Windows) est un agent sur le terrain qui fait son rapport à sa propre radio. <strong>Centraliser les logs, c'est créer le standard téléphonique central</strong> qui reçoit tous leurs appels au même endroit, les enregistre, et te prévient quand quelque chose d'important se passe.</p>
+  </div>
+
+  <div class="definition" style="border-left-color: var(--purple); margin-bottom: 12px;">
+    <strong style="color:var(--purple)">🏗️ 3 ARCHITECTURES — De la plus simple à la plus complète</strong>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">ARCHITECTURE 1 — SOLO : Windows 11 + Sysmon + Sysmon View (1 seule machine)</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># ── Niveau 1 : Analyser localement, sans VM ──</span><br>
+<span class="comment"># Prérequis : Sysmon installé</span><br><br>
+<span class="comment"># OUTIL 1 : Sysmon View — Visualisation graphique de les logs Sysmon</span><br>
+<span class="highlight">https://github.com/nshalabi/SysmonView</span><br>
+<span class="comment"># → Exporter les logs Sysmon en XML depuis l'Observateur d'événements</span><br>
+<span class="comment"># → Ouvrir avec SysmonView → graphe visuel des processus et connexions</span><br><br>
+<span class="comment"># OUTIL 2 : DeepBlueCLI — Analyser les logs Windows pour détecter les attaques</span><br>
+<span class="highlight">git clone https://github.com/sans-blue-team/DeepBlueCLI</span><br>
+<span class="highlight">cd DeepBlueCLI</span><br>
+<span class="highlight">.\DeepBlue.ps1</span> -log Security    <span class="comment"># Analyse le journal Sécurité</span><br>
+<span class="highlight">.\DeepBlue.ps1</span> -log Sysmon       <span class="comment"># Analyse les logs Sysmon</span><br><br>
+<span class="ok">→ DeepBlueCLI détecte automatiquement :</span><br>
+<span class="ok">   - Brute Force (trop d'Event 4625)</span><br>
+<span class="ok">   - Pass-the-Hash, Pass-the-Ticket</span><br>
+<span class="ok">   - Commandes PowerShell suspectes</span><br>
+<span class="ok">   - Création de comptes admins suspects</span>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">ARCHITECTURE 2 — LAB VM : Windows 11 → Wazuh sur Ubuntu (recommandé)</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># ── Niveau 2 : Wazuh Manager sur VM Ubuntu + agent sur Windows 11 ──</span><br>
+<span class="comment"># Matériel requis : 8 Go RAM min, SSD recommandé</span><br><br>
+<span class="comment">## ÉTAPE 1 — Installer VirtualBox + VM Ubuntu 22.04</span><br>
+<span class="highlight">https://www.virtualbox.org/wiki/Downloads</span><br>
+<span class="comment"># RAM allouée à la VM : 4 Go minimum</span><br><br>
+<span class="comment">## ÉTAPE 2 — Installer Wazuh sur Ubuntu</span><br>
+<span class="highlight">curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh</span><br>
+<span class="highlight">sudo bash wazuh-install.sh -a</span><br>
+<span class="comment"># Installe : Wazuh Manager + Filebeat + OpenSearch + Dashboard</span><br>
+<span class="ok">→ Interface web : https://IP_VM:443</span><br><br>
+<span class="comment">## ÉTAPE 3 — Installer l'agent Wazuh sur un poste Windows 11</span><br>
+<span class="comment"># Télécharger wazuh-agent-x.x.x-1.msi sur packages.wazuh.com</span><br>
+<span class="highlight">msiexec /i wazuh-agent.msi WAZUH_MANAGER="192.168.1.X" /q</span><br>
+<span class="highlight">NET START WazuhSvc</span><br><br>
+<span class="comment">## ÉTAPE 4 — Configurer l'agent pour envoyer Sysmon</span><br>
+<span class="comment"># Éditer C:\Program Files (x86)\ossec-agent\ossec.conf</span><br>
+<span class="warn">&lt;localfile&gt;</span><br>
+  <span class="warn">&lt;location&gt;</span>Microsoft-Windows-Sysmon/Operational<span class="warn">&lt;/location&gt;</span><br>
+  <span class="warn">&lt;log_format&gt;</span>eventchannel<span class="warn">&lt;/log_format&gt;</span><br>
+<span class="warn">&lt;/localfile&gt;</span><br><br>
+<span class="ok">→ Tous les logs (Security, Sysmon, Defender, Firewall)</span><br>
+<span class="ok">   arrivent dans le dashboard Wazuh en temps réel !</span>
+    </div>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="terminal-label">ARCHITECTURE 3 — ELK STACK COMPLET : Elasticsearch + Logstash + Kibana + Winlogbeat</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># ── Niveau 3 : Stack ELK complète — comme un vrai SOC ──</span><br>
+<span class="comment"># SIEM open source le plus utilisé en entreprise</span><br><br>
+<span class="comment">## Sur un poste Windows 11 : installer Winlogbeat</span><br>
+<span class="comment"># Winlogbeat = agent léger qui envoie les logs Windows vers ELK</span><br>
+<span class="highlight">https://www.elastic.co/downloads/beats/winlogbeat</span><br><br>
+<span class="comment"># Configurer winlogbeat.yml (C:\ProgramData\Elastic\Beats\winlogbeat)</span><br>
+<span class="warn">winlogbeat.event_logs:</span><br>
+  - <span class="highlight">name: Security</span><br>
+  - <span class="highlight">name: System</span><br>
+  - <span class="highlight">name: Application</span><br>
+  - <span class="highlight">name: Microsoft-Windows-Sysmon/Operational</span><br>
+  - <span class="highlight">name: "Microsoft-Windows-Windows Defender/Operational"</span><br>
+  - <span class="highlight">name: Microsoft-Windows-PowerShell/Operational</span><br>
+  - <span class="highlight">name: Microsoft-Windows-DNS-Client/Operational</span><br><br>
+<span class="warn">output.logstash:</span><br>
+  <span class="highlight">hosts: ["192.168.1.X:5044"]</span>  <span class="comment"># IP de ta VM ELK</span><br><br>
+<span class="comment">## Sur la VM Ubuntu : installer ELK</span><br>
+<span class="highlight">docker-compose up -d</span>  <span class="comment"># Avec le docker-compose Elastic officiel</span><br>
+<span class="ok">→ Kibana : http://IP_VM:5601</span><br><br>
+<span class="comment">## Ajouter les dashboards Sysmon pour Kibana</span><br>
+<span class="highlight">https://github.com/olafhartong/sysmon-modular</span><br>
+<span class="comment"># → Dashboards Kibana prêts à l'emploi pour visualiser Sysmon</span>
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 TA ROADMAP — Par où commencer selon ta situation</div>
+    <p><strong>En l’absence de VM ou en cas de faible RAM :</strong><br>
+    → Installe DeepBlueCLI (gratuit, fonctionne sur ton Windows seul). Lance-le sur les logs Security et Sysmon. C'est déjà un vrai exercice de SOC.</p>
+    <p><strong>Avec 8 Go de RAM et un disque de 256 Go :</strong><br>
+    → Déployer VirtualBox + Ubuntu 22.04 + Wazuh, puis connecter un poste Windows 11 comme agent. Un SIEM complet avec tableaux de bord peut ainsi être obtenu en quelques heures.</p>
+    <p><strong>Pour un laboratoire plus avancé :</strong><br>
+    → Ajoute un ELK Stack sur une 2ème VM. Déploie Suricata pour analyser le trafic réseau. L’architecture obtenue devient alors : EDR (Wazuh) + IDS (Suricata) + SIEM (ELK) = mini-SOC complet.</p>
+    <p><strong>Éléments visibles dans un tableau de bord Wazuh/ELK :</strong><br>
+    → Toutes les connexions réussies et échouées sur l’hôte analysé<br>
+    → Chaque processus lancé (Sysmon ID 1) avec son parent<br>
+    → Chaque connexion réseau (Sysmon ID 3) avec l'IP destination<br>
+    → Chaque détection Defender avec le nom du malware<br>
+    → Chaque modification de registre (Sysmon ID 13)<br>
+    → Chaque script PowerShell exécuté</p>
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Architecture</th><th>RAM requise</th><th>Temps setup</th><th>Compétences démontrées</th><th>Positionnement</th></tr></thead>
+    <tbody>
+      <tr><td>DeepBlueCLI (solo)</td><td>Aucune VM</td><td>10 min</td><td>Analyse logs Windows, détection attaques classiques</td><td>Niveau fondamental</td></tr>
+      <tr><td>Wazuh (EDR+SIEM)</td><td>8 Go total</td><td>2h</td><td>SIEM, EDR, alertes temps réel, tableaux de bord</td><td>Progression intermédiaire</td></tr>
+      <tr><td>ELK + Winlogbeat</td><td>12 Go total</td><td>4h</td><td>Pipeline logs, Logstash, Kibana, requêtes KQL</td><td>SOC junior</td></tr>
+      <tr><td>ELK + Wazuh + Suricata</td><td>16 Go total</td><td>1 journée</td><td>SOC complet : EDR + SIEM + IDS/IPS + corrélation</td><td>Profil opérationnel avancé</td></tr>
+    </tbody>
+  </table>
+
+  <div class="definition" style="border-left-color: var(--green); margin-top: 0;">
+    <strong style="color:var(--green)">🏆 Phrase dans un contexte d’entretien ou de présentation professionnelle / contexte opérationnel :</strong><br><br>
+    "Un environnement de démonstration Windows 11 peut être instrumenté avec Sysmon et centralisé via Wazuh sur une VM Ubuntu. Les journaux Security, Sysmon, Windows Defender, PowerShell et DNS y sont corrélés en temps réel, avec cartographie des alertes sur le framework MITRE ATT&CK."
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-label">// MINI-QUIZ FINAL</div>
+    <div class="quiz-q">Dans une architecture ELK recevant les journaux Sysmon d’un poste Windows 11 vers une VM Ubuntu, quel composant assure la transmission des logs côté Windows ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="answer(this, false, 'Logstash tourne sur le serveur ELK (la VM Ubuntu), pas sur Windows. C'est lui qui reçoit et transforme les logs, pas qui les collecte côté client.')">Logstash</button>
+      <button class="quiz-opt" onclick="answer(this, false, 'Kibana est l'interface web de visualisation. Il tourne sur le serveur ELK, pas sur Windows.')">Kibana</button>
+      <button class="quiz-opt" onclick="answer(this, true, 'Exact ! Winlogbeat est l'agent léger d'Elastic qui s'installe sur Windows. Il lit les journaux Windows (Security, Sysmon, Defender, PowerShell...) et les envoie vers Logstash ou directement vers Elasticsearch sur la VM Ubuntu.')">Winlogbeat</button>
+    </div>
+    <div class="quiz-feedback" id="qf-c_centralize"></div>
+  </div>
+</div>
+
+
+
+
+<!-- ═══════════════════════════════════
+     C_GOUV — GOUVERNANCE / GRC
+═══════════════════════════════════ -->
+<div class="concept" id="c_gouv">
+  <div class="concept-header">
+    <div class="concept-icon">🏛️</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 35 · GOUVERNANCE · GRC · MANAGEMENT</div>
+      <div class="concept-title">Gouvernance cyber, GRC, qualité et référentiels de pilotage</div>
+      <div class="concept-subtitle">CIA · SMSI · ISO/IEC 27001 · ISO 9001 · ITIL · COBIT · NIST</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_gouv')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    La cybersécurité mature ne repose pas uniquement sur des outils techniques. Elle s’appuie sur une <strong>gouvernance</strong>, une <strong>gestion des risques</strong>, des <strong>processus</strong>, des <strong>contrôles</strong>, des <strong>indicateurs</strong> et une logique d’<strong>amélioration continue</strong>. La GRC — Gouvernance, Risques, Conformité — constitue l’ossature qui relie le <strong>RSSI</strong>, la <strong>DSI</strong>, le <strong>SOC</strong>, l’audit, les métiers et la direction.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Principe</th><th>Définition opérationnelle</th><th>Exemple d’application</th></tr></thead>
+    <tbody>
+      <tr><td>Confidentialité</td><td>Limiter l’accès à l’information aux seules personnes autorisées</td><td>Contrôles d’accès, chiffrement, classification</td></tr>
+      <tr><td>Intégrité</td><td>Garantir qu’une donnée n’est pas modifiée de manière non autorisée</td><td>Hash, journalisation, contrôle de version, signature</td></tr>
+      <tr><td>Disponibilité</td><td>Assurer la continuité d’accès au service et aux données</td><td>Redondance, supervision, PRA, PCA</td></tr>
+      <tr><td>Traçabilité</td><td>Conserver les preuves des actions, accès et décisions</td><td>Logs, SIEM, audit trail, ticketing</td></tr>
+      <tr><td>Authenticité</td><td>Garantir l’identité d’une personne, d’un système ou d’une source</td><td>MFA, certificats, PKI, fédération d’identité</td></tr>
+      <tr><td>Non-répudiation</td><td>Empêcher la contestation d’une action réalisée</td><td>Signature électronique, journalisation probante</td></tr>
+    </tbody>
+  </table>
+
+  <div class="resource-grid">
+    <div class="resource-card">
+      <div class="badge-mini">SMSI</div>
+      <h4><a class="tool-link" href="https://www.iso.org/standard/27001" target="_blank" rel="noopener noreferrer">ISO/IEC 27001</a></h4>
+      <p>Exigences du système de management de la sécurité de l’information.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">CONTRÔLES</div>
+      <h4><a class="tool-link" href="https://www.iso.org/standard/75652.html" target="_blank" rel="noopener noreferrer">ISO/IEC 27002</a></h4>
+      <p>Mesures de sécurité et bonnes pratiques associées aux contrôles du SMSI.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">RISQUES</div>
+      <h4><a class="tool-link" href="https://www.iso.org/standard/80585.html" target="_blank" rel="noopener noreferrer">ISO/IEC 27005</a></h4>
+      <p>Approche structurée d’analyse et de traitement du risque cyber.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">QUALITÉ</div>
+      <h4><a class="tool-link" href="https://www.iso.org/standard/62085.html" target="_blank" rel="noopener noreferrer">ISO 9001</a></h4>
+      <p>Approche processus, audits, non-conformités, actions correctives, pilotage par indicateurs et amélioration continue.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">SERVICES</div>
+      <h4><a class="tool-link" href="https://www.peoplecert.org/browse-certifications/it-governance-and-service-management/ITIL-1" target="_blank" rel="noopener noreferrer">ITIL</a></h4>
+      <p>Gestion des services IT : incidents, problèmes, changements, demandes et niveaux de service.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">GOUVERNANCE</div>
+      <h4><a class="tool-link" href="https://www.isaca.org/resources/cobit" target="_blank" rel="noopener noreferrer">COBIT</a></h4>
+      <p>Cadre de gouvernance et de management de l’information et de la technologie à l’échelle entreprise.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">FRAMEWORK</div>
+      <h4><a class="tool-link" href="https://www.nist.gov/cyberframework" target="_blank" rel="noopener noreferrer">NIST CSF 2.0</a></h4>
+      <p>Cadre de pilotage du risque cyber : Govern, Identify, Protect, Detect, Respond, Recover.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">RÉSILIENCE</div>
+      <h4><a class="tool-link" href="https://www.iso.org/standard/75106.html" target="_blank" rel="noopener noreferrer">ISO 22301</a></h4>
+      <p>Continuité d’activité, résilience organisationnelle, articulation métier / DSI / sécurité.</p>
+    </div>
+  </div>
+
+  
+  <div class="resource-grid">
+    <div class="resource-card">
+      <div class="badge-mini">IA · MANAGEMENT</div>
+      <h4><a class="tool-link" href="https://www.iso.org/standard/42001" target="_blank" rel="noopener noreferrer">ISO/IEC 42001</a></h4>
+      <p>Système de management de l’intelligence artificielle (AIMS) pour encadrer la gouvernance, les responsabilités, la maîtrise du risque et l’amélioration continue des usages IA.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">IA · RISQUE</div>
+      <h4><a class="tool-link" href="https://www.iso.org/standard/77304.html" target="_blank" rel="noopener noreferrer">ISO/IEC 23894</a></h4>
+      <p>Guide de gestion des risques spécifiques à l’intelligence artificielle, utile pour articuler IA, conformité, sécurité et responsabilité.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">IA · GOUVERNANCE</div>
+      <h4><a class="tool-link" href="https://www.iso.org/standard/56641.html" target="_blank" rel="noopener noreferrer">ISO/IEC 38507</a></h4>
+      <p>Gouvernance de l’usage de l’IA par les organisations ; lecture utile pour les fonctions de direction, de conformité et de pilotage.</p>
+    </div>  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 MANAGEMENT CYBER ET QUALITÉ</div>
+    <p>Dans une organisation structurée, les incidents cyber sont pilotés comme des processus maîtrisés : détection, qualification, décision, confinement, reprise et retour d’expérience. Les notions héritées de la qualité — <strong>cartographie des processus</strong>, <strong>KPI</strong>, <strong>non-conformité</strong>, <strong>actions correctives</strong>, <strong>revue de direction</strong>, <strong>PDCA</strong> — sont directement applicables à la cybersécurité. Cette logique intéresse autant le <strong>RSSI</strong> que la <strong>DSI</strong>, les métiers, la conformité, la direction juridique et les fonctions d’<strong>intelligence économique</strong>. Elle s’étend désormais à la gouvernance de l’IA, à la veille normative et à l’anticipation des impacts réglementaires.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     C_ORGA — ORGANISMES
+═══════════════════════════════════ -->
+<div class="concept" id="c_orga">
+  <div class="concept-header">
+    <div class="concept-icon">🌐</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 36 · ORGANISMES DE RÉFÉRENCE ET CONFORMITÉ</div>
+      <div class="concept-title">ANSSI, CERT-FR, CNIL, ENISA, CISA, Cybermalveillance, COMCYBER, C4</div>
+      <div class="concept-subtitle">Doctrine, alerte, conformité, coordination, assistance et cyberdéfense</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_orga')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    L’écosystème cyber associe des autorités de régulation, des agences techniques, des structures de réponse à incident, des organismes de veille, des dispositifs d’assistance et des acteurs de coordination de crise. Cette cartographie est essentielle pour comprendre les interactions entre <strong>RSSI</strong>, <strong>DSI</strong>, <strong>SOC</strong>, <strong>CERT</strong>, <strong>CSIRT</strong> et cellules de crise.
+  </div>
+
+  <div class="resource-grid">
+    <div class="resource-card"><div class="badge-mini">FRANCE</div><h4><a class="tool-link" href="https://cyber.gouv.fr/" target="_blank" rel="noopener noreferrer">ANSSI</a></h4><p>Autorité nationale en matière de cybersécurité ; doctrine, guides, qualification, assistance et pilotage de la sécurité nationale.</p></div>
+    <div class="resource-card"><div class="badge-mini">RÉPONSE</div><h4><a class="tool-link" href="https://cert.ssi.gouv.fr/" target="_blank" rel="noopener noreferrer">CERT-FR</a></h4><p>Centre gouvernemental de veille, d’alerte et de réponse aux attaques informatiques.</p></div>
+    <div class="resource-card"><div class="badge-mini">RGPD</div><h4><a class="tool-link" href="https://www.cnil.fr/" target="_blank" rel="noopener noreferrer">CNIL</a></h4><p>Autorité de contrôle de la protection des données ; sécurité des traitements, violations de données, conformité RGPD.</p></div>
+    <div class="resource-card"><div class="badge-mini">UNION EUROPÉENNE</div><h4><a class="tool-link" href="https://www.enisa.europa.eu/" target="_blank" rel="noopener noreferrer">ENISA</a></h4><p>Agence de l’Union européenne pour la cybersécurité ; guides, exercices, maturité cyber, résilience, NIS2.</p></div>
+    <div class="resource-card"><div class="badge-mini">ÉTATS-UNIS</div><h4><a class="tool-link" href="https://www.cisa.gov/" target="_blank" rel="noopener noreferrer">CISA</a></h4><p>Cybersecurity and Infrastructure Security Agency ; alertes, KEV, recommandations, sécurité des infrastructures critiques.</p></div>
+    <div class="resource-card"><div class="badge-mini">ASSISTANCE</div><h4><a class="tool-link" href="https://www.cybermalveillance.gouv.fr/" target="_blank" rel="noopener noreferrer">Cybermalveillance.gouv.fr</a></h4><p>Dispositif d’assistance, de prévention et de sensibilisation pour victimes, collectivités et organisations.</p></div>
+    <div class="resource-card"><div class="badge-mini">DÉFENSE</div><h4><a class="tool-link" href="https://www.defense.gouv.fr/commandement-cyber" target="_blank" rel="noopener noreferrer">COMCYBER</a></h4><p>Commandement de la cyberdéfense du ministère des Armées.</p></div>
+    <div class="resource-card"><div class="badge-mini">COORDINATION</div><h4><a class="tool-link" href="https://cyber.gouv.fr/" target="_blank" rel="noopener noreferrer">C4 / coordination de crise cyber</a></h4><p>Coordination des acteurs mobilisés lors de crises cyber d’ampleur, articulation sécurité nationale et réponse opérationnelle.</p></div>
+  </div>
+
+  <div class="warning">
+    <strong>⚠️ Conformité :</strong> la sécurité des systèmes et la protection des données convergent. En cas de violation de données, le dialogue avec la <a class="tool-link" href="https://www.cnil.fr/" target="_blank" rel="noopener noreferrer">CNIL</a> relève directement des obligations RGPD, tandis que la doctrine technique et la gestion d’incident s’appuient sur l’<a class="tool-link" href="https://cyber.gouv.fr/" target="_blank" rel="noopener noreferrer">ANSSI</a> et le <a class="tool-link" href="https://cert.ssi.gouv.fr/" target="_blank" rel="noopener noreferrer">CERT-FR</a>.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     C_FORENSIC — FORENSIC / RE
+═══════════════════════════════════ -->
+<div class="concept" id="c_forensic">
+  <div class="concept-header">
+    <div class="concept-icon">🧪</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 37 · FORENSIC · MALWARE ANALYSIS · REVERSE ENGINEERING</div>
+      <div class="concept-title">Investigation numérique, analyse de compromission et ingénierie inverse</div>
+      <div class="concept-subtitle">Preuves · mémoire · disque · chronologie · sandbox · désassemblage</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_forensic')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Le <strong>forensic</strong> vise à collecter, préserver, analyser et présenter des preuves numériques exploitables. Le <strong>reverse engineering</strong> vise à comprendre le fonctionnement interne d’un binaire, d’un script ou d’un malware, afin d’identifier ses capacités, ses mécanismes de persistance, d’évasion, d’exfiltration ou de destruction.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Domaine</th><th>Objet</th><th>Exemples d’outils / cadres</th></tr></thead>
+    <tbody>
+      <tr><td>Forensic disque</td><td>Analyse d’images, artefacts, timelines, récupération d’indices</td><td>Autopsy, Sleuth Kit</td></tr>
+      <tr><td>Forensic mémoire</td><td>Processus, injections, connexions, secrets en mémoire</td><td>Volatility</td></tr>
+      <tr><td>Sandboxing</td><td>Observation comportementale en environnement isolé</td><td>Any.Run, Cuckoo</td></tr>
+      <tr><td>Reverse engineering</td><td>Désassemblage, décompilation, graphes de fonctions</td><td>Ghidra, IDA</td></tr>
+      <tr><td>Threat hunting</td><td>Recherche proactive d’indices faibles de compromission</td><td>SIEM, EDR, KQL, Sigma, YARA</td></tr>
+    </tbody>
+  </table>
+
+  <div class="resource-grid">
+    <div class="resource-card"><div class="badge-mini">FORENSIC</div><h4><a class="tool-link" href="https://www.autopsy.com/" target="_blank" rel="noopener noreferrer">Autopsy</a></h4><p>Plateforme d’investigation numérique et d’analyse d’artefacts.</p></div>
+    <div class="resource-card"><div class="badge-mini">MÉMOIRE</div><h4><a class="tool-link" href="https://www.volatilityfoundation.org/" target="_blank" rel="noopener noreferrer">Volatility</a></h4><p>Analyse mémoire pour identifier processus, DLL, injections et connexions.</p></div>
+    <div class="resource-card"><div class="badge-mini">REVERSE</div><h4><a class="tool-link" href="https://ghidra-sre.org/" target="_blank" rel="noopener noreferrer">Ghidra</a></h4><p>Suite de reverse engineering de la NSA : désassemblage, décompilation, analyse statique.</p></div>
+    <div class="resource-card"><div class="badge-mini">REVERSE</div><h4><a class="tool-link" href="https://hex-rays.com/ida-free" target="_blank" rel="noopener noreferrer">IDA Free</a></h4><p>Référence de l’écosystème reverse pour l’analyse statique de binaires.</p></div>
+    <div class="resource-card"><div class="badge-mini">SANDBOX</div><h4><a class="tool-link" href="https://any.run/" target="_blank" rel="noopener noreferrer">Any.Run</a></h4><p>Sandbox interactive orientée analyse comportementale et investigation.</p></div>
+    <div class="resource-card"><div class="badge-mini">RÈGLES</div><h4><a class="tool-link" href="https://virustotal.github.io/yara/" target="_blank" rel="noopener noreferrer">YARA</a></h4><p>Règles de détection orientées signatures logiques et patterns de malware.</p></div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 LOGIQUE D’INVESTIGATION</div>
+    <p>À la suite d’une compromission, le SOC qualifie l’incident, isole l’hôte, collecte les journaux, fige les preuves, calcule les hash, extrait les artefacts, observe le comportement en sandbox et, si nécessaire, déclenche une analyse plus profonde en reverse engineering afin d’identifier les capacités du code malveillant. Le forensic éclaire le <strong>quoi</strong> et le <strong>quand</strong>. Le reverse engineering éclaire le <strong>comment</strong>.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     C_CERTS — CERTIFICATIONS
+═══════════════════════════════════ -->
+<div class="concept" id="c_certs">
+  <div class="concept-header">
+    <div class="concept-icon">🎓</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 38 · CERTIFICATIONS CYBER — PROFESSIONNELS ET ENTREPRISES</div>
+      <div class="concept-title">Certifications de personnes, qualifications d’audit et certifications d’organisation</div>
+      <div class="concept-subtitle">Examens, cursus éditeurs, certifications techniques, SMSI et audits</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_certs')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Les certifications cyber couvrent deux logiques complémentaires : <strong>la certification de personnes</strong> (validation de compétences après examen ou parcours de formation) et <strong>la certification / qualification d’organisation</strong> (validation de maturité, d’un système de management ou d’une conformité à l’issue d’un audit).
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Catégorie</th><th>Référence</th><th>Positionnement</th><th>Source officielle</th></tr></thead>
+    <tbody>
+      <tr><td>Professionnel</td><td>ISC2 CC</td><td>Entrée de carrière, fondamentaux cybersécurité</td><td><a class="tool-link" href="https://www.isc2.org/certifications/cc" target="_blank" rel="noopener noreferrer">ISC2 CC</a></td></tr>
+      <tr><td>Professionnel</td><td>Cisco Cybersecurity Associate / CyberOps</td><td>SOC, surveillance, opérations de sécurité</td><td><a class="tool-link" href="https://www.cisco.com/site/us/en/learn/training-certifications/certifications/cybersecurity/associate/exams-and-training.html" target="_blank" rel="noopener noreferrer">Cisco</a></td></tr>
+      <tr><td>Professionnel</td><td>Microsoft SC-200</td><td>Security Operations Analyst</td><td><a class="tool-link" href="https://learn.microsoft.com/en-us/credentials/certifications/security-operations-analyst/" target="_blank" rel="noopener noreferrer">Microsoft</a></td></tr>
+      <tr><td>Professionnel</td><td>IBM QRadar SIEM</td><td>Analyste QRadar, use cases SIEM</td><td><a class="tool-link" href="https://www.ibm.com/training/certification/ibm-certified-analyst-security-qradar-siem-v75-C9005200" target="_blank" rel="noopener noreferrer">IBM</a></td></tr>
+      <tr><td>Professionnel</td><td>Splunk Core Certified User</td><td>Analyse SIEM, requêtes SPL, investigation logs</td><td><a class="tool-link" href="https://www.splunk.com/en_us/training/certification-track.html" target="_blank" rel="noopener noreferrer">Splunk</a></td></tr>
+      <tr><td>Professionnel</td><td>Fortinet NSE / FCF / FCA</td><td>Réseau, firewall, sécurité périmétrique et sécurité opérationnelle</td><td><a class="tool-link" href="https://training.fortinet.com/" target="_blank" rel="noopener noreferrer">Fortinet</a></td></tr>
+      <tr><td>Professionnel</td><td>CompTIA Security+</td><td>Fondation généraliste cybersécurité</td><td><a class="tool-link" href="https://www.comptia.org/en-us/certifications/security/" target="_blank" rel="noopener noreferrer">CompTIA</a></td></tr>
+      <tr><td>Professionnel</td><td>CompTIA CySA+</td><td>SOC, analyse, détection, réponse</td><td><a class="tool-link" href="https://www.comptia.org/en-us/certifications/cybersecurity-analyst/" target="_blank" rel="noopener noreferrer">CompTIA CySA+</a></td></tr>
+      <tr><td>Professionnel</td><td>ISC2 CISSP</td><td>Gouvernance, architecture, management</td><td><a class="tool-link" href="https://www.isc2.org/certifications/cissp" target="_blank" rel="noopener noreferrer">CISSP</a></td></tr>
+      <tr><td>Organisation</td><td>Certification ISO/IEC 27001</td><td>Certification du SMSI après audit par organisme accrédité</td><td><a class="tool-link" href="https://www.iso.org/standard/27001" target="_blank" rel="noopener noreferrer">ISO/IEC 27001</a></td></tr>
+      <tr><td>Organisation</td><td>HDS</td><td>Hébergement de données de santé</td><td><a class="tool-link" href="https://esante.gouv.fr/labels-certifications/hds" target="_blank" rel="noopener noreferrer">HDS</a></td></tr>
+      <tr><td>Organisation</td><td>PCI DSS</td><td>Sécurité des environnements cartes de paiement</td><td><a class="tool-link" href="https://www.pcisecuritystandards.org/" target="_blank" rel="noopener noreferrer">PCI SSC</a></td></tr>
+    </tbody>
+  </table>
+
+  <div class="resource-grid">
+    <div class="resource-card"><div class="badge-mini">GRATUIT / OFFICIEL</div><h4><a class="tool-link" href="https://www.isc2.org/landing/1mcc" target="_blank" rel="noopener noreferrer">ISC2 Certified in Cybersecurity</a></h4><p>Formation et examen d’entrée de carrière proposés gratuitement selon l’offre officielle en cours.</p></div>
+    <div class="resource-card"><div class="badge-mini">ÉDITEUR</div><h4><a class="tool-link" href="https://www.skillsforall.com/" target="_blank" rel="noopener noreferrer">Cisco Skills for All</a></h4><p>Parcours cybersécurité, réseau, Linux et automatisation.</p></div>
+    <div class="resource-card"><div class="badge-mini">ÉDITEUR</div><h4><a class="tool-link" href="https://learn.microsoft.com/training/" target="_blank" rel="noopener noreferrer">Microsoft Learn</a></h4><p>Parcours sécurité, cloud, conformité et opérations de sécurité.</p></div>
+    <div class="resource-card"><div class="badge-mini">ÉDITEUR</div><h4><a class="tool-link" href="https://www.ibm.com/training/" target="_blank" rel="noopener noreferrer">IBM Training</a></h4><p>Parcours QRadar, sécurité analytique et certifications SIEM.</p></div>
+  </div>
+
+  <div class="warning">
+    <strong>⚠️ Distinction essentielle :</strong> une <strong>certification de personne</strong> valide des compétences après examen ou parcours évalué ; une <strong>certification d’organisation</strong> valide un système, un périmètre ou un niveau de conformité à l’issue d’un audit. Les deux dimensions sont complémentaires dans une vitrine professionnelle orientée cyber.
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C_WATCH — VEILLE
+═══════════════════════════════════ -->
+<div class="concept" id="c_watch">
+  <div class="concept-header">
+    <div class="concept-icon">🧭</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 39 · VEILLE JURIDIQUE · STRATÉGIQUE · IA · GÉOPOLITIQUE</div>
+      <div class="concept-title">Veille informationnelle, juridique, intelligence économique et lecture géopolitique du risque cyber</div>
+      <div class="concept-subtitle">AI Act · NIS2 · threat landscape · souveraineté · secteurs critiques</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_watch')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Une posture cyber de haut niveau suppose une veille continue sur les <strong>normes</strong>, les <strong>régulations</strong>, les <strong>menaces</strong>, les <strong>acteurs</strong>, les dépendances technologiques et les évolutions géopolitiques. Cette veille intéresse directement la gouvernance, la conformité, les achats, l’architecture, le SOC et la stratégie d’entreprise.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Axe de veille</th><th>Objet</th><th>Impact pour la cybersécurité</th></tr></thead>
+    <tbody>
+      <tr><td>Juridique</td><td>RGPD, AI Act, NIS2, obligations sectorielles</td><td>Conformité, gestion des risques, gouvernance, notification et responsabilités</td></tr>
+      <tr><td>Stratégique</td><td>Menaces sectorielles, chaînes d’approvisionnement, dépendances critiques</td><td>Priorisation des risques, choix d’investissement, résilience</td></tr>
+      <tr><td>Géopolitique</td><td>Tensions étatiques, influence, sabotage, cyberdéfense, souveraineté</td><td>Threat modeling, scénarios de crise, sécurité des secteurs critiques</td></tr>
+      <tr><td>Technique</td><td>Threat landscapes, vulnérabilités exploitées, nouvelles TTP</td><td>Use cases SOC, patching, détection, hunting</td></tr>
+    </tbody>
+  </table>
+
+  <div class="resource-grid">
+    <div class="resource-card">
+      <div class="badge-mini">UNION EUROPÉENNE · IA</div>
+      <h4><a class="tool-link" href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng" target="_blank" rel="noopener noreferrer">AI Act — Regulation (EU) 2024/1689</a></h4>
+      <p>Texte officiel de l’Union européenne encadrant les systèmes d’intelligence artificielle selon une logique de niveaux de risque.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">UNION EUROPÉENNE · CYBER</div>
+      <h4><a class="tool-link" href="https://www.enisa.europa.eu/topics/state-of-cybersecurity-in-the-eu/cybersecurity-policies/nis-directive-2" target="_blank" rel="noopener noreferrer">NIS2 — ENISA</a></h4>
+      <p>Cadre européen renforçant les exigences de cybersécurité pour les entités essentielles et importantes.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">THREAT LANDSCAPE</div>
+      <h4><a class="tool-link" href="https://www.enisa.europa.eu/publications" target="_blank" rel="noopener noreferrer">ENISA Publications</a></h4>
+      <p>Threat landscapes, rapports sectoriels, méthodologies, analyses utiles pour la veille opérationnelle et stratégique.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">VULNÉRABILITÉS EXPLOITÉES</div>
+      <h4><a class="tool-link" href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener noreferrer">CISA KEV</a></h4>
+      <p>Catalogue des vulnérabilités connues comme exploitées dans le monde réel, utile à la priorisation patch et au reporting RSSI.</p>
+    </div>
+  </div>
+
+  <div class="warning">
+    <strong>⚠️ Point de maturité :</strong> la veille n’est pas une activité décorative. Elle alimente la décision, la gouvernance, la conformité, la stratégie d’investissement, la priorisation des correctifs et la compréhension des rapports de force technologiques, industriels et géopolitiques. Elle démontre une capacité de lecture transversale du risque cyber.
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C_LOGS — LOGS
+═══════════════════════════════════ -->
+<div class="concept" id="c_logs">
+  <div class="concept-header">
+    <div class="concept-icon">📚</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 40 · MAÎTRISE DES LOGS</div>
+      <div class="concept-title">Maîtrise des logs, corrélation et visibilité sécurité</div>
+      <div class="concept-subtitle">Journalisation, normalisation, corrélation, rétention et exploitation SOC</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_logs')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    La visibilité cyber dépend directement de la qualité des <strong>logs</strong>. Une organisation mature définit quelles sources journaliser, quels événements conserver, combien de temps les retenir, comment les centraliser et comment les exploiter dans une logique d’alerte, d’enquête et de preuve.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Source</th><th>Ce qu’elle apporte</th><th>Valeur SOC</th></tr></thead>
+    <tbody>
+      <tr><td>Firewall</td><td>Flux autorisés / bloqués, IP, ports, sens des connexions</td><td>Détection d’exposition, filtrage, scans, communications suspectes</td></tr>
+      <tr><td>Proxy</td><td>Navigation web, domaines, URLs, catégories, utilisateurs</td><td>Détection phishing, C2, web malveillant, corrélation d’utilisateurs</td></tr>
+      <tr><td>DNS</td><td>Résolutions de noms, domaines demandés</td><td>Détection domaines malveillants, DGA, tunneling</td></tr>
+      <tr><td>EDR / Sysmon</td><td>Processus, modules, scripts, réseau hôte, persistance</td><td>Détection comportementale et investigation hôte</td></tr>
+      <tr><td>Authentification</td><td>Succès, échecs, privilèges, MFA, fédération</td><td>Brute force, élévation, compromission de comptes</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    <strong>⚠️ Point critique :</strong> des logs absents, trop pauvres, non synchronisés ou non corrélés dégradent fortement la capacité de détection. La qualité de la journalisation est un facteur de maturité aussi important que les outils eux-mêmes.
+  </div>
+</div>
+
+
+
+<!-- ═══════════════════════════════════
+     C_OSCLOUD — OS & CLOUD
+═══════════════════════════════════ -->
+<div class="concept" id="c_oscloud">
+  <div class="concept-header">
+    <div class="concept-icon">☁️</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 41 · OS & CLOUD</div>
+      <div class="concept-title">Systèmes d’exploitation, applications et environnements cloud</div>
+      <div class="concept-subtitle">Windows · Linux · Unix · macOS · Android · Azure · AWS · OVHcloud · sécurité opérationnelle</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_oscloud')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    Une posture cybersécurité crédible suppose une compréhension transversale des <strong>systèmes d’exploitation</strong>, des <strong>applications</strong> et des <strong>environnements cloud</strong>. Le SOC, le pentest, le forensic, l’administration sécurisée et la gouvernance ne s’exercent pas sur un système abstrait : ils s’appliquent à des plateformes concrètes, à leurs journaux, à leurs mécanismes d’authentification, à leurs services exposés et à leurs risques propres.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Environnement</th><th>Enjeux cyber</th><th>Lecture SOC / Pentest / Défense</th></tr></thead>
+    <tbody>
+      <tr><td>Windows</td><td>Active Directory, PowerShell, RDP, journaux de sécurité, EDR, Sysmon</td><td>Détection d’abus de comptes, mouvements latéraux, persistance, collecte d’artefacts</td></tr>
+      <tr><td>Linux / Unix</td><td>SSH, services réseau, permissions, journaux système, scripts Bash, durcissement</td><td>Audit d’exposition, analyse de logs, sécurité serveur, supervision et forensic</td></tr>
+      <tr><td>macOS</td><td>Gestion des postes, contrôle des applications, conformité parc, protection des terminaux</td><td>Intégration EDR/XDR, journalisation, politiques de sécurité poste de travail</td></tr>
+      <tr><td>Android / mobile</td><td>Gestion MDM/EMM, sécurité applicative, permissions, BYOD, fuite de données</td><td>Contrôle des usages, sécurité des applications mobiles et exposition des terminaux</td></tr>
+      <tr><td>Applications</td><td>Vulnérabilités web, authentification, secrets, API, dépendances logicielles</td><td>WAF, tests applicatifs, journaux, patching, contrôle d’accès</td></tr>
+      <tr><td>Azure</td><td>Identité, IAM, logs cloud, Defender, Sentinel, posture SaaS/PaaS/IaaS</td><td>Cloud SOC, corrélation, sécurité identité, exposition services et conformité</td></tr>
+      <tr><td>AWS</td><td>IAM, CloudTrail, Security Hub, GuardDuty, S3, sécurité des workloads</td><td>Visibilité cloud-native, détection, audit, cartographie des configurations</td></tr>
+      <tr><td>OVHcloud</td><td>Hébergement, réseau, instances, sauvegarde, souveraineté, PRA/PCA</td><td>Architecture, segmentation, sauvegarde, continuité et exposition Internet</td></tr>
+    </tbody>
+  </table>
+
+  <div class="resource-grid">
+    <div class="resource-card">
+      <div class="badge-mini">WINDOWS</div>
+      <h4><a class="tool-link" href="https://learn.microsoft.com/windows/security/" target="_blank" rel="noopener noreferrer">Windows Security</a></h4>
+      <p>Références sur la sécurité Windows, journalisation, Defender, identity et administration sécurisée.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">LINUX</div>
+      <h4><a class="tool-link" href="https://ubuntu.com/security" target="_blank" rel="noopener noreferrer">Linux / Ubuntu Security</a></h4>
+      <p>Durcissement, correctifs, paquets, supervision des services et administration serveur.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">APPLE</div>
+      <h4><a class="tool-link" href="https://support.apple.com/guide/security/welcome/web" target="_blank" rel="noopener noreferrer">Apple Platform Security</a></h4>
+      <p>Documentation de référence sur la sécurité macOS, iOS et l’écosystème Apple.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">ANDROID</div>
+      <h4><a class="tool-link" href="https://source.android.com/docs/security" target="_blank" rel="noopener noreferrer">Android Security</a></h4>
+      <p>Architecture de sécurité Android, sandboxing applicatif, permissions, intégrité et mises à jour.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">AZURE</div>
+      <h4><a class="tool-link" href="https://learn.microsoft.com/azure/security/" target="_blank" rel="noopener noreferrer">Azure Security</a></h4>
+      <p>Identité, Sentinel, Defender for Cloud, posture cloud, journaux et sécurité des ressources Azure.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">AWS</div>
+      <h4><a class="tool-link" href="https://aws.amazon.com/security/" target="_blank" rel="noopener noreferrer">AWS Security</a></h4>
+      <p>IAM, GuardDuty, Security Hub, CloudTrail, sécurité des comptes, des workloads et des données.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">OVHCLOUD</div>
+      <h4><a class="tool-link" href="https://www.ovhcloud.com/fr/security/" target="_blank" rel="noopener noreferrer">OVHcloud Security</a></h4>
+      <p>Sécurité des services cloud, hébergement, continuité, réseau et protection des infrastructures.</p>
+    </div>
+    <div class="resource-card">
+      <div class="badge-mini">PENTEST APPLICATIF</div>
+      <h4><a class="tool-link" href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener noreferrer">OWASP Top 10</a></h4>
+      <p>Référence pour les risques applicatifs majeurs : authentification, injection, accès, exposition et failles logiques.</p>
+    </div>
+  </div>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 LIEN DIRECT AVEC LE SOC ET LE PENTEST</div>
+    <p>Le SOC doit savoir <strong>où journaliser</strong>, <strong>quels signaux surveiller</strong> et <strong>quels comportements sont normaux ou anormaux</strong> selon la plateforme. Un pentest autorisé ne s’aborde pas de la même façon sur un serveur Linux, un contrôleur de domaine Windows, une application web, un tenant Azure ou un compte AWS. La maîtrise de ces environnements montre une capacité de lecture transversale très recherchée en cybersécurité.</p>
+  </div>
+
+  <div class="warning">
+    <strong>⚠️ Point de maturité :</strong> la cybersécurité ne se limite pas à un outil unique. Elle suppose la compréhension combinée des systèmes, des applications, des identités, des réseaux, du cloud, des journaux et des dépendances de l’organisation.
+  </div>
+</div>
+
+
+
+<!-- ═══════════════════════════════════
+     C_JOBS — MÉTIERS CYBER
+═══════════════════════════════════ -->
+<div class="concept" id="c_jobs">
+  <div class="concept-header">
+    <div class="concept-icon">👨‍💻</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 42 · MÉTIERS DE LA CYBERSÉCURITÉ</div>
+      <div class="concept-title">Cartographie des rôles, responsabilités et niveaux d’expertise</div>
+      <div class="concept-subtitle">SOC · Gouvernance · Pentest · Cloud · DevSecOps · Forensic</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_jobs')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    La cybersécurité s’organise autour de plusieurs métiers complémentaires couvrant la détection, la réponse, la gouvernance, l’architecture, le développement sécurisé et la stratégie. Une vision globale permet de comprendre les interactions entre les équipes et les niveaux de maturité.
+  </div>
+
+  
+  
+  <table class="compare">
+    <thead><tr><th>Rôle</th><th>Mission</th><th>Niveau / Positionnement</th></tr></thead>
+    <tbody>
+      <tr><td>Analyste CERT / CSIRT</td><td>Traitement et coordination des incidents, veille, qualification, diffusion d’alertes et appui opérationnel</td><td>Expert</td></tr>
+      <tr><td>Analyste forensic</td><td>Analyse post-incident, collecte, préservation et exploitation des preuves numériques</td><td>Expert</td></tr>
+      <tr><td>Analyste malware</td><td>Analyse de code malveillant, reverse engineering et caractérisation des capacités d’un échantillon</td><td>Expert</td></tr>
+      <tr><td>Analyste SOC N1</td><td>Surveillance, tri des alertes, première analyse et escalade</td><td>Opérationnel</td></tr>
+      <tr><td>Analyste SOC N2</td><td>Investigation approfondie, corrélation, qualification et réponse</td><td>Intermédiaire</td></tr>
+      <tr><td>Analyste SOC N3</td><td>Expertise, threat hunting, réponse avancée et soutien aux cas complexes</td><td>Expert</td></tr>
+      <tr><td>Architecte sécurité</td><td>Conception des architectures sécurisées et des principes de défense</td><td>Senior</td></tr>
+      <tr><td>Auditeur sécurité</td><td>Évaluation des contrôles, de la conformité et du niveau de maturité sécurité</td><td>GRC</td></tr>
+      <tr><td>Consultant cybersécurité</td><td>Audit, conseil, accompagnement sécurité, gouvernance et conformité</td><td>Transverse</td></tr>
+      <tr><td>DevSecOps</td><td>Intégration de la sécurité dans les chaînes CI/CD et le cycle de développement</td><td>Transverse</td></tr>
+      <tr><td>Directeur des systèmes d'information (DSI)</td><td>Pilotage global du système d’information et articulation avec la sécurité</td><td>Direction</td></tr>
+      <tr><td>Équipe Blue Team</td><td>Détection, supervision, défense et amélioration des capacités de protection</td><td>Défensif</td></tr>
+      <tr><td>Équipe Purple Team</td><td>Coordination entre offensive et défense afin d’améliorer les détections et les contrôles</td><td>Stratégique</td></tr>
+      <tr><td>Équipe Red Team</td><td>Simulation d’attaques réalistes et évaluation de la résilience organisationnelle</td><td>Offensif avancé</td></tr>
+      <tr><td>Ingénieur sécurité</td><td>Implémentation technique des solutions, contrôles et architectures de sécurité</td><td>Technique</td></tr>
+      <tr><td>Ingénieur sécurité cloud</td><td>Sécurité des environnements Azure, AWS, OVHcloud et services associés</td><td>Spécialisé</td></tr>
+      <tr><td>Responsable de la sécurité des systèmes d'information (RSSI)</td><td>Stratégie sécurité, gouvernance, gestion des risques et pilotage de la conformité</td><td>Direction</td></tr>
+      <tr><td>Testeur d'intrusion (Pentester)</td><td>Tests d’intrusion autorisés, validation d’exposition et audit technique offensif</td><td>Offensif</td></tr>
+      <tr><td>Threat Hunter</td><td>Recherche proactive de menaces et d’indices faibles de compromission</td><td>Expert</td></tr>
+    </tbody>
+  </table>
+
+
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 LECTURE ORGANISATIONNELLE</div>
+    <p>Une organisation mature articule les rôles entre SOC, gouvernance, architecture et métiers. Le RSSI pilote la stratégie, le SOC surveille et détecte, les équipes techniques implémentent et les experts interviennent en cas d’incident ou d’audit.</p>
+  </div>
+
+  <div class="warning">
+    <strong>⚠️ Vision clé :</strong> comprendre les métiers permet de se positionner, d’évoluer et de dialoguer efficacement avec chaque acteur de la cybersécurité.
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     C_JARGON — JARGON CYBER
+═══════════════════════════════════ -->
+<div class="concept" id="c_jargon">
+  <div class="concept-header">
+    <div class="concept-icon">🧠</div>
+    <div class="concept-meta">
+      <div class="concept-num">CONCEPT 43 · JARGON CYBER & POSTURE PROFESSIONNELLE</div>
+      <div class="concept-title">Maîtrise du langage technique, opérationnel et stratégique</div>
+      <div class="concept-subtitle">Compréhension, précision, transmission et vulgarisation</div>
+    </div>
+    <button class="done-btn" onclick="markDone(this, 'c_jargon')">✓ Maîtrisé</button>
+  </div>
+
+  <div class="definition">
+    La cybersécurité repose sur un langage technique précis. La maîtrise du jargon permet d’interagir efficacement avec les équipes SOC, RSSI, DSI, pentest et gouvernance, tout en étant capable de vulgariser pour les métiers.
+  </div>
+
+  <table class="compare">
+    <thead><tr><th>Terme</th><th>Définition</th><th>Contexte</th></tr></thead>
+    <tbody>
+      <tr><td>Parsing</td><td>Analyse et extraction de données à partir de logs ou fichiers</td><td>SOC, SIEM, scripts</td></tr>
+      <tr><td>Indentation</td><td>Structuration du code pour lisibilité et logique</td><td>Python, Bash, scripts</td></tr>
+      <tr><td>Implémentation</td><td>Mise en œuvre technique d’une solution</td><td>Projet IT / sécurité</td></tr>
+      <tr><td>Incrémentation</td><td>Amélioration progressive d’un système</td><td>DevSecOps, SOC</td></tr>
+      <tr><td>Scalabilité</td><td>Capacité à monter en charge</td><td>SIEM, infrastructure</td></tr>
+      <tr><td>Redondance</td><td>Duplication des systèmes pour continuité</td><td>PRA / PCA</td></tr>
+      <tr><td>DMZ</td><td>Zone intermédiaire exposée entre Internet et SI interne</td><td>Architecture réseau</td></tr>
+      <tr><td>Air Gap</td><td>Isolation physique d’un système</td><td>Systèmes critiques</td></tr>
+      <tr><td>Audit</td><td>Évaluation de conformité et sécurité</td><td>ISO, NIST, RSSI</td></tr>
+      <tr><td>Diagnostic</td><td>Analyse d’un incident ou anomalie</td><td>SOC, support</td></tr>
+      <tr><td>Compromission</td><td>Système ou compte infiltré par un attaquant</td><td>Incident cyber</td></tr>
+      <tr><td>Conformité</td><td>Respect des normes et réglementations</td><td>RGPD, ISO, NIS2</td></tr>
+    </tbody>
+  </table>
+
+  <div class="scenario">
+    <div class="scenario-label">🎯 POSTURE PROFESSIONNELLE</div>
+    <p>Un profil cybersécurité efficace maîtrise le langage technique, sait structurer une analyse, argumenter avec précision et adapter son discours selon l’interlocuteur : expert technique, direction, métier ou client.</p>
+  </div>
+
+  <div class="warning">
+    <strong>⚠️ Point clé :</strong> la valeur d’un professionnel cyber repose autant sur sa capacité d’analyse que sur sa capacité à expliquer clairement des enjeux complexes.
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+  const progress = {};
+
+  function markDone(btn, id) {
+    if (btn.classList.contains('marked')) return;
+    btn.classList.add('marked');
+    btn.textContent = '✓ Validé';
+    progress[id] = true;
+
+    // Update sidebar
+    const link = document.querySelector(`a[href="#${id}"]`);
+    if (link) link.classList.add('done');
+
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const total = 29;
+    const done = Object.keys(progress).length;
+    document.getElementById('progressBar').style.width = (done/total*100) + '%';
+    document.getElementById('progressLabel').textContent = `${done} / ${total} concepts`;
+  }
+
+  function setActive(el) {
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function answer(btn, correct, feedback) {
+    const concept = btn.closest('.concept');
+    const id = concept.id;
+    const fb = document.getElementById('qf-' + id);
+    if (!fb) return;
+    if (concept.dataset.solved === 'true') return;
+
+    concept.dataset.tries = (parseInt(concept.dataset.tries || '0') + 1).toString();
+    const tries = parseInt(concept.dataset.tries);
+
+    if (correct) {
+      concept.dataset.solved = 'true';
+      concept.querySelectorAll('.quiz-opt').forEach(b => { b.disabled = true; b.style.cursor = 'default'; });
+      btn.classList.add('correct');
+      const star = tries === 1 ? ' <span style="color:#f0a500;font-size:12px;">⭐ Du premier coup !</span>'
+        : tries === 2 ? ' <span style="color:#94a3b8;font-size:12px;">Au 2ème essai.</span>'
+        : ' <span style="color:#7d8590;font-size:12px;">Après ' + tries + ' essais.</span>';
+      fb.innerHTML = '✅ ' + feedback + star
+        + '<br><button onclick="resetQuiz(\'' + id + '\')" style="margin-top:10px;padding:6px 14px;border:1px solid #30363d;background:transparent;color:#7d8590;font-family:IBM Plex Mono,monospace;font-size:11px;border-radius:4px;cursor:pointer;letter-spacing:1px;" onmouseover="this.style.color=\'#58a6ff\'" onmouseout="this.style.color=\'#7d8590\'">↺ Réinitialiser pour réviser</button>';
+      fb.className = 'quiz-feedback show ok';
+    } else {
+      btn.classList.add('wrong');
+      btn.disabled = true;
+      const remaining = concept.querySelectorAll('.quiz-opt:not(:disabled)').length;
+      const hint = remaining > 0
+        ? '<br><span style="color:var(--accent);font-size:12px;font-family:IBM Plex Mono,monospace;">👉 ' + remaining + ' réponse' + (remaining > 1 ? 's' : '') + ' encore disponible' + (remaining > 1 ? 's' : '') + ' — continue !</span>'
+        : '';
+      fb.innerHTML = '❌ ' + feedback + hint;
+      fb.className = 'quiz-feedback show ko';
+    }
+  }
+
+  function resetQuiz(conceptId) {
+    const concept = document.getElementById(conceptId);
+    if (!concept) return;
+    delete concept.dataset.solved;
+    delete concept.dataset.tries;
+    const fb = document.getElementById('qf-' + conceptId);
+    if (fb) { fb.className = 'quiz-feedback'; fb.innerHTML = ''; }
+    concept.querySelectorAll('.quiz-opt').forEach(b => {
+      b.disabled = false;
+      b.classList.remove('correct', 'wrong');
+      b.style.cursor = '';
+    });
+  }
+
+
+  const toolLinks = [
+    { label: 'MITRE ATT&CK', url: 'https://attack.mitre.org' },
+    { label: 'MITRE D3FEND', url: 'https://d3fend.mitre.org' },
+    { label: 'VirusTotal', url: 'https://www.virustotal.com' },
+    { label: 'Shodan', url: 'https://www.shodan.io' },
+    { label: 'Censys', url: 'https://search.censys.io' },
+    { label: 'Exploit Database', url: 'https://www.exploit-db.com' },
+    { label: 'Exploit DB', url: 'https://www.exploit-db.com' },
+    { label: 'WHOIS', url: 'https://lookup.icann.org' },
+    { label: 'RDAP', url: 'https://lookup.icann.org' },
+    { label: 'HIBP', url: 'https://haveibeenpwned.com' },
+    { label: 'HaveIBeenPwned', url: 'https://haveibeenpwned.com' },
+    { label: 'CVE', url: 'https://www.cve.org' },
+    { label: 'NVD', url: 'https://nvd.nist.gov' },
+    { label: 'GitHub', url: 'https://github.com' },
+    { label: 'AbuseIPDB', url: 'https://www.abuseipdb.com' },
+    { label: 'AlienVault OTX', url: 'https://otx.alienvault.com' }
+  ];
+
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\]/g, '\$&');
+  }
+
+  function linkKeywords(root) {
+    const skipTags = new Set(['A', 'SCRIPT', 'STYLE', 'CODE', 'PRE']);
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node.parentNode || skipTags.has(node.parentNode.nodeName)) return NodeFilter.FILTER_REJECT;
+        if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+    textNodes.forEach(node => {
+      let content = node.nodeValue;
+      let replaced = false;
+      toolLinks.forEach(tool => {
+        const regex = new RegExp(`\b${escapeRegExp(tool.label)}\b`, 'g');
+        if (regex.test(content)) {
+          content = content.replace(regex, `<a class="tool-link" href="${tool.url}" target="_blank" rel="noopener noreferrer">${tool.label}</a>`);
+          replaced = true;
+        }
+      });
+      if (replaced) {
+        const span = document.createElement('span');
+        span.innerHTML = content;
+        node.parentNode.replaceChild(span, node);
+      }
+    });
+  }
+
+  // Highlight active sidebar item on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        document.querySelectorAll('.sidebar-item').forEach(i => {
+          i.classList.toggle('active', i.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '-56px 0px -40% 0px' });
+
+  document.querySelectorAll('.concept').forEach(c => observer.observe(c));
+  linkKeywords(document.querySelector('main'));
+</script>
+
+<footer>
+  <div>© 2026 Arsène Amalou — Tous droits réservés</div>
+  <div>Exposition maîtrisée</div>
+</footer>
+
+</body>
+</html>

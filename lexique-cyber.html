@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lexique Cyber — Référentiel Terminologique</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root {
+  --bg: #0d1117; --surface:#161b22; --surface2:#1c2333; --border:#30363d; --text:#e6edf3;
+  --muted:#7d8590; --accent:#f0a500; --accent2:#58a6ff; --green:#3fb950; --red:#ff6b6b; --purple:#bc8cff;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 74px;
+}
+#references, .letter-section {
+  scroll-margin-top: 74px;
+}
+.alphabet a {
+  transition: transform .18s ease, border-color .18s ease, background .18s ease, color .18s ease, box-shadow .18s ease;
+}
+.alphabet a:hover {
+  transform: translateY(-2px) scale(1.04);
+  background: linear-gradient(135deg, rgba(88,166,255,.16), rgba(240,165,0,.10));
+  border-color: rgba(88,166,255,.45);
+  color: var(--text);
+  box-shadow: 0 6px 18px rgba(0,0,0,.22);
+}
+.alphabet a:active {
+  transform: translateY(0) scale(.99);
+}
+.sidebar-item {
+  transition: color .15s ease, background .15s ease, padding-left .15s ease, border-left-color .15s ease;
+  border-left: 2px solid transparent;
+}
+.sidebar-item:hover {
+  padding-left: 24px;
+  border-left-color: rgba(240,165,0,.55);
+}
+.term-card h3 {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.ref-badge {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  letter-spacing:1px;
+  color:var(--accent);
+  border:1px solid rgba(240,165,0,.28);
+  background:rgba(240,165,0,.08);
+  padding:3px 7px;
+  border-radius:999px;
+  white-space:nowrap;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+header{border-bottom:1px solid var(--border);padding:0 32px;position:sticky;top:0;background:rgba(13,17,23,.92);backdrop-filter:blur(12px);z-index:100;display:flex;align-items:center;gap:24px;height:56px}
+.logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--accent);letter-spacing:2px}
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 56px)}
+.sidebar{border-right:1px solid var(--border);padding:24px 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;background:var(--surface)}
+.sidebar-group-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);padding:0 20px 8px;text-transform:uppercase}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:8px 20px;text-decoration:none;color:var(--muted);transition:background .15s}
+.sidebar-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.alphabet{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 20px 12px}
+.alphabet a{text-decoration:none;color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:8px 0;text-align:center;border:1px solid var(--border);border-radius:6px;background:var(--surface2)}
+main{position:relative;z-index:1}
+.hero{padding:64px 64px 36px;border-bottom:1px solid var(--border);background:linear-gradient(135deg, rgba(240,165,0,.04) 0%, transparent 60%)}
+.hero-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:3px;margin-bottom:16px;display:block}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(36px,4vw,56px);font-weight:900;line-height:1.05;letter-spacing:-1px;margin-bottom:20px}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero p{font-size:16px;color:var(--muted);max-width:900px;line-height:1.7}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:18px}
+.stat{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);padding:8px 12px;border:1px solid var(--border);border-radius:999px;background:var(--surface2)}
+.search-wrap{padding:24px 64px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.01)}
+.search-box{width:100%;padding:16px 18px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:15px;outline:none}
+.search-box::placeholder{color:var(--muted)}
+.section-intro{padding:24px 64px 0}
+.definition{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:20px 24px;margin-bottom:24px;font-size:16px;line-height:1.7;color:var(--text)}
+.definition strong{color:var(--accent)}
+.refs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:0 64px 32px}
+.ref-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px}
+.ref-card h4{font-size:14px;margin-bottom:6px}
+.ref-card p{font-size:12px;color:var(--muted);line-height:1.6}
+.tool-link{color:var(--accent2);text-decoration:none;border-bottom:1px dashed rgba(88,166,255,.45)}
+.tool-link:hover{color:#9cc9ff;border-bottom-color:rgba(156,201,255,.8)}
+.letter-section{padding:28px 64px;border-top:1px solid rgba(48,54,61,.6)}
+.letter-head{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.letter-badge{width:42px;height:42px;border-radius:50%;background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.35);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;color:var(--accent);font-weight:600}
+.letter-head h2{font-family:'Fraunces',serif;font-size:28px}
+.term-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.term-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;transition:transform .15s ease,border-color .15s ease}
+.term-card:hover{transform:translateY(-2px);border-color:rgba(88,166,255,.35)}
+.term-card h3{font-size:18px;line-height:1.35;margin-bottom:10px;color:var(--text)}
+.term-card p{font-size:14px;line-height:1.75;color:#c7d2dd}
+.example{margin-top:10px;padding:10px 12px;border-radius:8px;background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.16);font-size:13px;color:#b7c9dd;line-height:1.65}
+.meta-links{margin-top:10px;font-size:12px}
+footer{padding:28px 64px 48px;color:var(--muted);font-size:13px;line-height:1.7;border-top:1px solid var(--border)}
+.hidden{display:none !important}
+@media (max-width: 900px) {
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .hero,.search-wrap,.section-intro,.letter-section,footer{padding-left:24px;padding-right:24px}
+  .refs{padding-left:24px;padding-right:24px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">// CYBER LEXIQUE</div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-group-label">Navigation alphabétique</div>
+    <div class="alphabet"><a href="#sec-A">A</a><a href="#sec-B">B</a><a href="#sec-C">C</a><a href="#sec-D">D</a><a href="#sec-E">E</a><a href="#sec-F">F</a><a href="#sec-G">G</a><a href="#sec-H">H</a><a href="#sec-I">I</a><a href="#sec-J">J</a><a href="#sec-K">K</a><a href="#sec-L">L</a><a href="#sec-M">M</a><a href="#sec-N">N</a><a href="#sec-O">O</a><a href="#sec-P">P</a><a href="#sec-Q">Q</a><a href="#sec-R">R</a><a href="#sec-S">S</a><a href="#sec-T">T</a><a href="#sec-U">U</a><a href="#sec-V">V</a><a href="#sec-W">W</a><a href="#sec-Z">Z</a></div>
+    <a class="sidebar-item" href="#references">Références officielles</a>
+    <a class="sidebar-item" href="#sec-A">Début du lexique</a>
+  </aside>
+
+  <main>
+    <section class="hero">
+      <span class="hero-tag">// LEXIQUE CYBER · SOC · GOUVERNANCE · RÉSEAU · CRYPTO · THREAT INTELLIGENCE</span>
+      <h1>Lexique cyber<br><em>opérationnel et pédagogique</em></h1>
+      <p>Cette page reprend l’esprit visuel du portfolio existant et propose un lexique cyber structuré, lisible et directement exploitable. Les définitions sont rédigées dans un style professionnel, avec un souci de clarté, de précision terminologique et de transmission. Les concepts les plus structurants sont reliés à des sites officiels de référence.</p>
+      <div class="stats">
+        <div class="stat">173 termes structurés</div>
+        <div class="stat">Index alphabétique</div>
+        <div class="stat">Références officielles</div>
+        <div class="stat">Style cohérent avec le portfolio</div>
+      </div>
+    </section>
+
+    <section class="search-wrap">
+      <input id="search" class="search-box" type="search" placeholder="Rechercher un terme, un protocole, un métier, une attaque, un concept..." />
+    </section>
+
+    <section class="section-intro">
+      <div class="definition">
+        <strong>Principe éditorial :</strong> ce lexique privilégie les termes réellement utiles en cybersécurité, en SOC, en gouvernance, en réseau, en cloud, en forensic, en pentest et en conformité. Il s’appuie sur le vocabulaire spécialisé fourni par l’Office québécois de la langue française et sur des référentiels techniques ou institutionnels reconnus. Les définitions sont reformulées pour éviter la copie servile, sauf lorsque la stabilité terminologique impose une formulation standard.
+      </div>
+    </section>
+
+    <section class="refs" id="references">
+      <div class="ref-card"><h4><a class="tool-link" href="https://oqlf.gouv.qc.ca/ressources/bibliotheque/dictionnaires/vocabulaire-securite-informatique.aspx" target="_blank" rel="noopener noreferrer">OQLF — Vocabulaire de la sécurité informatique</a></h4><p>Référence francophone utile pour la terminologie propre, la normalisation des usages et la précision linguistique.</p></div>
+      <div class="ref-card"><h4><a class="tool-link" href="https://cyber.gouv.fr/" target="_blank" rel="noopener noreferrer">ANSSI</a></h4><p>Références françaises sur la sécurisation, les risques, la crise, les guides et la doctrine.</p></div>
+      <div class="ref-card"><h4><a class="tool-link" href="https://csrc.nist.gov/glossary" target="_blank" rel="noopener noreferrer">NIST Glossary</a></h4><p>Glossaire technique et institutionnel utile pour l’alignement international des définitions cyber.</p></div>
+      <div class="ref-card"><h4><a class="tool-link" href="https://attack.mitre.org/" target="_blank" rel="noopener noreferrer">MITRE ATT&CK</a></h4><p>Référentiel de tactiques et techniques d’attaque observées dans le monde réel.</p></div>
+      <div class="ref-card"><h4><a class="tool-link" href="https://www.cve.org/" target="_blank" rel="noopener noreferrer">CVE</a> / <a class="tool-link" href="https://nvd.nist.gov/" target="_blank" rel="noopener noreferrer">NVD</a></h4><p>Normalisation et documentation des vulnérabilités connues, métadonnées et scoring.</p></div>
+      <div class="ref-card"><h4><a class="tool-link" href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener noreferrer">OWASP Top 10</a></h4><p>Référence synthétique pour les risques applicatifs Web et les défauts de conception les plus fréquents.</p></div>
+    </section>
+
+    
+    <section class="letter-section" id="sec-A">
+      <div class="letter-head">
+        <div class="letter-badge">A</div>
+        <h2>A</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="accès à privilèges ensemble des accès élevés permettant d’administrer des systèmes, des comptes, des secrets ou des équipements critiques. leur contrôle relève du principe de moindre privilège et des mécanismes pam.">
+      <h3>Accès à privilèges</h3>
+      <p>Ensemble des accès élevés permettant d’administrer des systèmes, des comptes, des secrets ou des équipements critiques. Leur contrôle relève du principe de moindre privilège et des mécanismes PAM.</p>
+      <div class="example">Exemple : compte administrateur de domaine ou accès root sur un serveur Linux.</div>
+      <div class="meta-links"><a class="tool-link" href="https://cyber.gouv.fr/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="algorithme à clé publique algorithme de chiffrement asymétrique reposant sur une biclé : une clé publique pour chiffrer ou vérifier, une clé privée pour déchiffrer ou signer.">
+      <h3>Algorithme à clé publique</h3>
+      <p>Algorithme de chiffrement asymétrique reposant sur une biclé : une clé publique pour chiffrer ou vérifier, une clé privée pour déchiffrer ou signer.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://csrc.nist.gov/glossary" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="algorithme à clé secrète algorithme de chiffrement symétrique utilisant une même clé pour le chiffrement et le déchiffrement des données.">
+      <h3>Algorithme à clé secrète</h3>
+      <p>Algorithme de chiffrement symétrique utilisant une même clé pour le chiffrement et le déchiffrement des données.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://csrc.nist.gov/glossary" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="algorithme de hachage fonction mathématique transformant des données de taille variable en une empreinte de taille fixe. elle sert à vérifier l’intégrité, à comparer des fichiers et à protéger certains secrets stockés.">
+      <h3>Algorithme de hachage</h3>
+      <p>Fonction mathématique transformant des données de taille variable en une empreinte de taille fixe. Elle sert à vérifier l’intégrité, à comparer des fichiers et à protéger certains secrets stockés.</p>
+      <div class="example">Exemple : SHA-256 produit une empreinte de longueur fixe.</div>
+      <div class="meta-links"><a class="tool-link" href="https://csrc.nist.gov/glossary" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="analyse de risques démarche consistant à identifier des menaces, des vulnérabilités, des impacts et des probabilités afin de hiérarchiser les risques et de décider des traitements appropriés.">
+      <h3>Analyse de risques</h3>
+      <p>Démarche consistant à identifier des menaces, des vulnérabilités, des impacts et des probabilités afin de hiérarchiser les risques et de décider des traitements appropriés.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://cyber.gouv.fr/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="analyse forensic investigation technique visant à collecter, préserver, analyser et présenter des preuves numériques exploitables après un incident ou une compromission.">
+      <h3>Analyse forensic</h3>
+      <p>Investigation technique visant à collecter, préserver, analyser et présenter des preuves numériques exploitables après un incident ou une compromission.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.autopsy.com/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="anomalie écart observé par rapport à un comportement attendu, habituel ou autorisé. en soc, une anomalie peut déclencher une alerte ou un enrichissement contextuel.">
+      <h3>Anomalie</h3>
+      <p>Écart observé par rapport à un comportement attendu, habituel ou autorisé. En SOC, une anomalie peut déclencher une alerte ou un enrichissement contextuel.</p>
+      <div class="example">Exemple : connexion à 3 h du matin depuis un pays jamais utilisé auparavant.</div>
+      
+    </article>
+    
+
+    <article class="term-card" data-term="anti-logiciel malveillant logiciel de sécurité chargé de détecter, bloquer, mettre en quarantaine ou supprimer des codes malveillants sur un poste, un serveur ou un environnement plus large.">
+      <h3>Anti-logiciel malveillant</h3>
+      <p>Logiciel de sécurité chargé de détecter, bloquer, mettre en quarantaine ou supprimer des codes malveillants sur un poste, un serveur ou un environnement plus large.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="attaque par déni de service cyberattaque qui vise à rendre un service indisponible en le submergeant de requêtes ou en épuisant ses ressources techniques.">
+      <h3>Attaque par déni de service</h3>
+      <p>Cyberattaque qui vise à rendre un service indisponible en le submergeant de requêtes ou en épuisant ses ressources techniques.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cisa.gov/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="attaque par interception attaque consistant à s’insérer entre deux parties pour observer, détourner ou modifier des échanges, parfois en se faisant passer pour l’une d’elles.">
+      <h3>Attaque par interception</h3>
+      <p>Attaque consistant à s’insérer entre deux parties pour observer, détourner ou modifier des échanges, parfois en se faisant passer pour l’une d’elles.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://owasp.org/www-community/attacks/Session_hijacking_attack" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="authentification multifacteur méthode d’authentification exigeant au moins deux facteurs distincts, par exemple un mot de passe et un code à usage unique, ou un mot de passe et une biométrie.">
+      <h3>Authentification multifacteur</h3>
+      <p>Méthode d’authentification exigeant au moins deux facteurs distincts, par exemple un mot de passe et un code à usage unique, ou un mot de passe et une biométrie.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cnil.fr/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="audit de sécurité évaluation structurée des mesures de sécurité, de leur application réelle et de leur adéquation aux risques, aux exigences réglementaires et aux objectifs métiers.">
+      <h3>Audit de sécurité</h3>
+      <p>Évaluation structurée des mesures de sécurité, de leur application réelle et de leur adéquation aux risques, aux exigences réglementaires et aux objectifs métiers.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.iso.org/standard/27001" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="autorité de certification entité de confiance qui délivre des certificats numériques liant une identité à une clé publique dans un cadre de confiance défini.">
+      <h3>Autorité de certification</h3>
+      <p>Entité de confiance qui délivre des certificats numériques liant une identité à une clé publique dans un cadre de confiance défini.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://csrc.nist.gov/glossary" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-B">
+      <div class="letter-head">
+        <div class="letter-badge">B</div>
+        <h2>B</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="backdoor mécanisme caché ou non documenté permettant un accès détourné à un système, à une application ou à un équipement sans suivre le chemin d’authentification normal.">
+      <h3>Backdoor</h3>
+      <p>Mécanisme caché ou non documenté permettant un accès détourné à un système, à une application ou à un équipement sans suivre le chemin d’authentification normal.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="balayage de ports technique consistant à sonder des ports réseau afin d’identifier ceux qui sont ouverts, filtrés ou fermés et d’en déduire les services exposés.">
+      <h3>Balayage de ports</h3>
+      <p>Technique consistant à sonder des ports réseau afin d’identifier ceux qui sont ouverts, filtrés ou fermés et d’en déduire les services exposés.</p>
+      <div class="example">Exemple : Nmap permet de réaliser un balayage de ports autorisé.</div>
+      <div class="meta-links"><a class="tool-link" href="https://nmap.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="base de données ensemble structuré de données organisé pour leur consultation, leur modification et leur exploitation. en cyber, sa sécurité concerne l’accès, les secrets, les sauvegardes et les injections.">
+      <h3>Base de données</h3>
+      <p>Ensemble structuré de données organisé pour leur consultation, leur modification et leur exploitation. En cyber, sa sécurité concerne l’accès, les secrets, les sauvegardes et les injections.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="biclé paire composée d’une clé publique et d’une clé privée utilisée dans un système cryptographique asymétrique.">
+      <h3>Biclé</h3>
+      <p>Paire composée d’une clé publique et d’une clé privée utilisée dans un système cryptographique asymétrique.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://csrc.nist.gov/glossary" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="biométrie utilisation de caractéristiques physiques ou comportementales pour identifier ou authentifier une personne, par exemple une empreinte digitale, une reconnaissance faciale ou une dynamique de frappe.">
+      <h3>Biométrie</h3>
+      <p>Utilisation de caractéristiques physiques ou comportementales pour identifier ou authentifier une personne, par exemple une empreinte digitale, une reconnaissance faciale ou une dynamique de frappe.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="bombe logique code malveillant à déclenchement différé qui s’active lorsqu’une condition ou une date déterminée est atteinte.">
+      <h3>Bombe logique</h3>
+      <p>Code malveillant à déclenchement différé qui s’active lorsqu’une condition ou une date déterminée est atteinte.</p>
+      <div class="example">Exemple : destruction de fichiers à une date précise.</div>
+      
+    </article>
+    
+
+    <article class="term-card" data-term="brèche de sécurité situation dans laquelle une vulnérabilité ou une faiblesse de contrôle a permis un accès non autorisé, une fuite de données, une altération ou une indisponibilité significative.">
+      <h3>Brèche de sécurité</h3>
+      <p>Situation dans laquelle une vulnérabilité ou une faiblesse de contrôle a permis un accès non autorisé, une fuite de données, une altération ou une indisponibilité significative.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="buffer overflow dépassement de mémoire tampon provoqué par l’écriture de plus de données que prévu dans une zone mémoire, ce qui peut entraîner un plantage ou l’exécution de code arbitraire.">
+      <h3>Buffer overflow</h3>
+      <p>Dépassement de mémoire tampon provoqué par l’écriture de plus de données que prévu dans une zone mémoire, ce qui peut entraîner un plantage ou l’exécution de code arbitraire.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://cwe.mitre.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-C">
+      <div class="letter-head">
+        <div class="letter-badge">C</div>
+        <h2>C</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="c2 (command and control) infrastructure ou canal de commande utilisé par un attaquant pour piloter un malware ou un accès compromis, recevoir des données ou transmettre des ordres.">
+      <h3>C2 (Command and Control)</h3>
+      <p>Infrastructure ou canal de commande utilisé par un attaquant pour piloter un malware ou un accès compromis, recevoir des données ou transmettre des ordres.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="canular fausse information diffusée pour tromper, manipuler ou faire exécuter une action inutile ou dangereuse, souvent sous la forme d’une alerte ou d’un message alarmiste.">
+      <h3>Canular</h3>
+      <p>Fausse information diffusée pour tromper, manipuler ou faire exécuter une action inutile ou dangereuse, souvent sous la forme d’une alerte ou d’un message alarmiste.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="cert / csirt équipe spécialisée dans la veille, la coordination, l’analyse et la réponse aux incidents de sécurité touchant un périmètre organisationnel ou sectoriel.">
+      <h3>CERT / CSIRT</h3>
+      <p>Équipe spécialisée dans la veille, la coordination, l’analyse et la réponse aux incidents de sécurité touchant un périmètre organisationnel ou sectoriel.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://cert.ssi.gouv.fr/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="certificat numérique document électronique attestant qu’une clé publique est associée à une identité ou à un service donné, selon une chaîne de confiance définie.">
+      <h3>Certificat numérique</h3>
+      <p>Document électronique attestant qu’une clé publique est associée à une identité ou à un service donné, selon une chaîne de confiance définie.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://csrc.nist.gov/glossary" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="chaîne cybercriminelle représentation des étapes successives d’une attaque, de la reconnaissance initiale jusqu’à l’impact ou à l’exfiltration.">
+      <h3>Chaîne cybercriminelle</h3>
+      <p>Représentation des étapes successives d’une attaque, de la reconnaissance initiale jusqu’à l’impact ou à l’exfiltration.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://attack.mitre.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="chasse aux menaces recherche proactive d’indices faibles de compromission ou de comportements anormaux ayant échappé aux mécanismes de détection traditionnels.">
+      <h3>Chasse aux menaces</h3>
+      <p>Recherche proactive d’indices faibles de compromission ou de comportements anormaux ayant échappé aux mécanismes de détection traditionnels.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://cyber.gouv.fr/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="cheval de troie logiciel malveillant dissimulé dans un programme ou un fichier apparemment légitime afin d’ouvrir un accès, d’exécuter une charge ou de tromper l’utilisateur.">
+      <h3>Cheval de Troie</h3>
+      <p>Logiciel malveillant dissimulé dans un programme ou un fichier apparemment légitime afin d’ouvrir un accès, d’exécuter une charge ou de tromper l’utilisateur.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="chiffrement transformation de données en une forme inintelligible pour qui ne possède pas la clé adéquate. il protège la confidentialité et contribue à certains mécanismes d’intégrité et d’authenticité.">
+      <h3>Chiffrement</h3>
+      <p>Transformation de données en une forme inintelligible pour qui ne possède pas la clé adéquate. Il protège la confidentialité et contribue à certains mécanismes d’intégrité et d’authenticité.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://csrc.nist.gov/glossary" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="clé cryptographique valeur utilisée par un algorithme pour chiffrer, déchiffrer, signer, vérifier ou dériver d’autres secrets.">
+      <h3>Clé cryptographique</h3>
+      <p>Valeur utilisée par un algorithme pour chiffrer, déchiffrer, signer, vérifier ou dériver d’autres secrets.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="cloud security posture niveau de maîtrise des configurations, des identités, des journaux, des expositions et des protections au sein d’un environnement cloud.">
+      <h3>Cloud security posture</h3>
+      <p>Niveau de maîtrise des configurations, des identités, des journaux, des expositions et des protections au sein d’un environnement cloud.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://learn.microsoft.com/en-us/security/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="compromission état d’un système, d’un compte, d’un terminal ou d’un flux qui a perdu tout ou partie de sa confidentialité, de son intégrité ou de sa disponibilité à la suite d’un accès non autorisé ou d’une action malveillante.">
+      <h3>Compromission</h3>
+      <p>État d’un système, d’un compte, d’un terminal ou d’un flux qui a perdu tout ou partie de sa confidentialité, de son intégrité ou de sa disponibilité à la suite d’un accès non autorisé ou d’une action malveillante.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="conformité respect démontrable de règles, normes, obligations légales, politiques internes et référentiels applicables à un système d’information ou à une organisation.">
+      <h3>Conformité</h3>
+      <p>Respect démontrable de règles, normes, obligations légales, politiques internes et référentiels applicables à un système d’information ou à une organisation.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="confidentialité principe selon lequel seules les entités autorisées peuvent accéder à une information ou à un service donné.">
+      <h3>Confidentialité</h3>
+      <p>Principe selon lequel seules les entités autorisées peuvent accéder à une information ou à un service donné.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="contrôle d’accès ensemble de règles et de mécanismes qui déterminent qui peut accéder à quoi, dans quelles conditions et avec quel niveau de privilège.">
+      <h3>Contrôle d’accès</h3>
+      <p>Ensemble de règles et de mécanismes qui déterminent qui peut accéder à quoi, dans quelles conditions et avec quel niveau de privilège.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="correctif modification logicielle destinée à corriger un bogue, combler une vulnérabilité, améliorer une fonction ou adapter un composant à un nouvel usage.">
+      <h3>Correctif</h3>
+      <p>Modification logicielle destinée à corriger un bogue, combler une vulnérabilité, améliorer une fonction ou adapter un composant à un nouvel usage.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cisa.gov/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="cryptanalyse étude des méthodes permettant d’attaquer, d’évaluer ou de casser un mécanisme cryptographique sans disposer nécessairement de la clé attendue.">
+      <h3>Cryptanalyse</h3>
+      <p>Étude des méthodes permettant d’attaquer, d’évaluer ou de casser un mécanisme cryptographique sans disposer nécessairement de la clé attendue.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="cryptographie discipline qui conçoit et étudie les mécanismes de chiffrement, de signature, de preuve et de protection mathématique de l’information.">
+      <h3>Cryptographie</h3>
+      <p>Discipline qui conçoit et étudie les mécanismes de chiffrement, de signature, de preuve et de protection mathématique de l’information.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="cve identifiant normalisé attribué à une vulnérabilité connue afin de faciliter sa référence, son partage, son suivi et sa corrélation dans l’écosystème cyber.">
+      <h3>CVE</h3>
+      <p>Identifiant normalisé attribué à une vulnérabilité connue afin de faciliter sa référence, son partage, son suivi et sa corrélation dans l’écosystème cyber.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cve.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="cvss système de notation permettant d’estimer la sévérité technique d’une vulnérabilité selon des métriques standardisées.">
+      <h3>CVSS</h3>
+      <p>Système de notation permettant d’estimer la sévérité technique d’une vulnérabilité selon des métriques standardisées.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://nvd.nist.gov/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-D">
+      <div class="letter-head">
+        <div class="letter-badge">D</div>
+        <h2>D</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="ddos attaque par déni de service distribué dans laquelle un grand nombre de machines ou de sources participent simultanément à la saturation d’une cible.">
+      <h3>DDoS</h3>
+      <p>Attaque par déni de service distribué dans laquelle un grand nombre de machines ou de sources participent simultanément à la saturation d’une cible.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cisa.gov/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="déchiffrement opération inverse du chiffrement qui restitue les données en clair grâce à la clé appropriée.">
+      <h3>Déchiffrement</h3>
+      <p>Opération inverse du chiffrement qui restitue les données en clair grâce à la clé appropriée.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="décryptage décodage d’un cryptogramme sans disposer au départ de la clé légitime, généralement dans un cadre de cryptanalyse.">
+      <h3>Décryptage</h3>
+      <p>Décodage d’un cryptogramme sans disposer au départ de la clé légitime, généralement dans un cadre de cryptanalyse.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="défense en profondeur principe consistant à superposer plusieurs couches de protection afin qu’une défaillance unique ne compromette pas l’ensemble du système.">
+      <h3>Défense en profondeur</h3>
+      <p>Principe consistant à superposer plusieurs couches de protection afin qu’une défaillance unique ne compromette pas l’ensemble du système.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="déni de service indisponibilité d’un service ou d’une ressource due à une surcharge, à une panne ou à une action malveillante.">
+      <h3>Déni de service</h3>
+      <p>Indisponibilité d’un service ou d’une ressource due à une surcharge, à une panne ou à une action malveillante.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="détournement de domaine technique qui redirige un nom de domaine ou une url vers une infrastructure illégitime afin de tromper les utilisateurs et de collecter des informations.">
+      <h3>Détournement de domaine</h3>
+      <p>Technique qui redirige un nom de domaine ou une URL vers une infrastructure illégitime afin de tromper les utilisateurs et de collecter des informations.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="devsecops approche consistant à intégrer la sécurité dans les cycles de développement, de déploiement, d’automatisation et d’exploitation des applications et infrastructures.">
+      <h3>DevSecOps</h3>
+      <p>Approche consistant à intégrer la sécurité dans les cycles de développement, de déploiement, d’automatisation et d’exploitation des applications et infrastructures.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://owasp.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="dmz zone réseau intermédiaire exposée, conçue pour héberger des services accessibles depuis internet tout en limitant l’exposition du réseau interne.">
+      <h3>DMZ</h3>
+      <p>Zone réseau intermédiaire exposée, conçue pour héberger des services accessibles depuis Internet tout en limitant l’exposition du réseau interne.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="dns tunneling utilisation détournée du protocole dns pour faire transiter des données ou des commandes, parfois à des fins d’exfiltration ou de c2.">
+      <h3>DNS tunneling</h3>
+      <p>Utilisation détournée du protocole DNS pour faire transiter des données ou des commandes, parfois à des fins d’exfiltration ou de C2.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="durcissement réduction de la surface d’attaque d’un système par la suppression de services inutiles, l’application de paramètres sûrs et la restriction des privilèges.">
+      <h3>Durcissement</h3>
+      <p>Réduction de la surface d’attaque d’un système par la suppression de services inutiles, l’application de paramètres sûrs et la restriction des privilèges.</p>
+      
+      
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-E">
+      <div class="letter-head">
+        <div class="letter-badge">E</div>
+        <h2>E</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="edr solution de détection et de réponse sur les terminaux qui observe les événements système, détecte des comportements suspects et aide à l’investigation ou au confinement.">
+      <h3>EDR <span class="ref-badge">Voir plus</span></h3>
+      <p>Solution de détection et de réponse sur les terminaux qui observe les événements système, détecte des comportements suspects et aide à l’investigation ou au confinement.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.microsoft.com/en-us/security/business/endpoint-security/microsoft-defender-endpoint" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="empreinte numérique séquence alphanumérique de longueur fixe représentant de manière condensée un fichier, un message ou un ensemble de données. elle sert notamment à vérifier l’intégrité.">
+      <h3>Empreinte numérique</h3>
+      <p>Séquence alphanumérique de longueur fixe représentant de manière condensée un fichier, un message ou un ensemble de données. Elle sert notamment à vérifier l’intégrité.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://csrc.nist.gov/glossary" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="encapsulation mécanisme par lequel une donnée est placée dans une structure de protocole ou de transport, souvent à plusieurs couches dans un modèle réseau.">
+      <h3>Encapsulation</h3>
+      <p>Mécanisme par lequel une donnée est placée dans une structure de protocole ou de transport, souvent à plusieurs couches dans un modèle réseau.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="enregistreur de frappe dispositif logiciel ou matériel qui capture les touches tapées afin de collecter des identifiants, secrets ou habitudes d’usage.">
+      <h3>Enregistreur de frappe</h3>
+      <p>Dispositif logiciel ou matériel qui capture les touches tapées afin de collecter des identifiants, secrets ou habitudes d’usage.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="enisa agence de l’union européenne pour la cybersécurité, productrice de guides, d’analyses de menaces et de ressources sur nis2 et la résilience cyber.">
+      <h3>ENISA</h3>
+      <p>Agence de l’Union européenne pour la cybersécurité, productrice de guides, d’analyses de menaces et de ressources sur NIS2 et la résilience cyber.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.enisa.europa.eu/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="escalade de privilèges technique ou effet permettant à un utilisateur ou à un code d’obtenir plus de droits que prévu initialement.">
+      <h3>Escalade de privilèges</h3>
+      <p>Technique ou effet permettant à un utilisateur ou à un code d’obtenir plus de droits que prévu initialement.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="exfiltration sortie non autorisée de données hors d’un périmètre légitime, souvent vers une infrastructure externe contrôlée ou compromise.">
+      <h3>Exfiltration</h3>
+      <p>Sortie non autorisée de données hors d’un périmètre légitime, souvent vers une infrastructure externe contrôlée ou compromise.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="exploit code, méthode ou chaîne d’actions exploitant une vulnérabilité pour provoquer un effet non prévu : accès, exécution, élévation, fuite ou sabotage.">
+      <h3>Exploit</h3>
+      <p>Code, méthode ou chaîne d’actions exploitant une vulnérabilité pour provoquer un effet non prévu : accès, exécution, élévation, fuite ou sabotage.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="exploit database base publique recensant des preuves de concept et des codes d’exploitation publiés pour des vulnérabilités connues.">
+      <h3>Exploit Database</h3>
+      <p>Base publique recensant des preuves de concept et des codes d’exploitation publiés pour des vulnérabilités connues.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.exploit-db.com/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-F">
+      <div class="letter-head">
+        <div class="letter-badge">F</div>
+        <h2>F</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="facteur d’authentification catégorie de preuve utilisée pour vérifier une identité : ce que l’on sait, ce que l’on possède ou ce que l’on est.">
+      <h3>Facteur d’authentification</h3>
+      <p>Catégorie de preuve utilisée pour vérifier une identité : ce que l’on sait, ce que l’on possède ou ce que l’on est.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="faille de sécurité faiblesse exploitable dans un logiciel, un matériel, une configuration ou un processus pouvant compromettre un système ou une donnée.">
+      <h3>Faille de sécurité</h3>
+      <p>Faiblesse exploitable dans un logiciel, un matériel, une configuration ou un processus pouvant compromettre un système ou une donnée.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="falsification de requête intersites (csrf) attaque visant à faire exécuter à un navigateur authentifié des actions non souhaitées sur un site de confiance.">
+      <h3>Falsification de requête intersites (CSRF)</h3>
+      <p>Attaque visant à faire exécuter à un navigateur authentifié des actions non souhaitées sur un site de confiance.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://owasp.org/www-community/attacks/csrf" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="faux positif alerte erronée signalant un événement légitime comme malveillant.">
+      <h3>Faux positif</h3>
+      <p>Alerte erronée signalant un événement légitime comme malveillant.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="faux négatif échec de détection laissant passer un événement malveillant considéré à tort comme légitime.">
+      <h3>Faux négatif</h3>
+      <p>Échec de détection laissant passer un événement malveillant considéré à tort comme légitime.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="forensic mémoire analyse de la mémoire vive pour retrouver des processus, des connexions, des injections, des secrets, des modules ou des artefacts volatils.">
+      <h3>Forensic mémoire</h3>
+      <p>Analyse de la mémoire vive pour retrouver des processus, des connexions, des injections, des secrets, des modules ou des artefacts volatils.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="forensic disque examen d’un support ou d’une image disque pour reconstituer des événements, récupérer des artefacts et établir une chronologie.">
+      <h3>Forensic disque</h3>
+      <p>Examen d’un support ou d’une image disque pour reconstituer des événements, récupérer des artefacts et établir une chronologie.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="fuite d’information transmission ou exposition non autorisée d’informations sensibles, qu’elle soit accidentelle, négligente ou malveillante.">
+      <h3>Fuite d’information</h3>
+      <p>Transmission ou exposition non autorisée d’informations sensibles, qu’elle soit accidentelle, négligente ou malveillante.</p>
+      
+      
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-G">
+      <div class="letter-head">
+        <div class="letter-badge">G</div>
+        <h2>G</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="gestion des privilèges pilotage du cycle de vie des droits élevés et des accès sensibles : création, approbation, usage, revue, retrait et traçabilité.">
+      <h3>Gestion des privilèges</h3>
+      <p>Pilotage du cycle de vie des droits élevés et des accès sensibles : création, approbation, usage, revue, retrait et traçabilité.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="gouvernance cyber organisation des rôles, décisions, priorités, politiques, risques et contrôles afin d’aligner la cybersécurité sur les objectifs de l’organisation.">
+      <h3>Gouvernance cyber</h3>
+      <p>Organisation des rôles, décisions, priorités, politiques, risques et contrôles afin d’aligner la cybersécurité sur les objectifs de l’organisation.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="grc acronyme de gouvernance, risques et conformité. il désigne la fonction et les pratiques qui relient la stratégie, le pilotage des risques et le respect des obligations.">
+      <h3>GRC</h3>
+      <p>Acronyme de gouvernance, risques et conformité. Il désigne la fonction et les pratiques qui relient la stratégie, le pilotage des risques et le respect des obligations.</p>
+      
+      
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-H">
+      <div class="letter-head">
+        <div class="letter-badge">H</div>
+        <h2>H</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="hachage opération appliquant une fonction de hachage à des données pour produire une empreinte utile au contrôle d’intégrité, à l’indexation ou au stockage sécurisé de certains secrets.">
+      <h3>Hachage</h3>
+      <p>Opération appliquant une fonction de hachage à des données pour produire une empreinte utile au contrôle d’intégrité, à l’indexation ou au stockage sécurisé de certains secrets.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="hameçonnage technique de fraude reposant sur l’usurpation d’une identité ou d’une apparence légitime afin d’obtenir des secrets, de l’argent ou l’exécution d’une action malveillante.">
+      <h3>Hameçonnage <span class="ref-badge">Voir plus</span></h3>
+      <p>Technique de fraude reposant sur l’usurpation d’une identité ou d’une apparence légitime afin d’obtenir des secrets, de l’argent ou l’exécution d’une action malveillante.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cybermalveillance.gouv.fr/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="harponnage forme ciblée de hameçonnage visant une personne ou un petit groupe avec un contenu préparé selon son contexte professionnel ou personnel.">
+      <h3>Harponnage</h3>
+      <p>Forme ciblée de hameçonnage visant une personne ou un petit groupe avec un contenu préparé selon son contexte professionnel ou personnel.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="honeypot système, service ou ressource volontairement exposé pour attirer, observer ou détourner des activités malveillantes.">
+      <h3>Honeypot</h3>
+      <p>Système, service ou ressource volontairement exposé pour attirer, observer ou détourner des activités malveillantes.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="horodatage attribution d’une date et d’une heure fiables à un événement, un document, une signature ou une preuve numérique.">
+      <h3>Horodatage</h3>
+      <p>Attribution d’une date et d’une heure fiables à un événement, un document, une signature ou une preuve numérique.</p>
+      
+      
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-I">
+      <div class="letter-head">
+        <div class="letter-badge">I</div>
+        <h2>I</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="iam gestion des identités et des accès couvrant les comptes, rôles, droits, fédérations, mécanismes d’authentification et règles d’autorisation.">
+      <h3>IAM</h3>
+      <p>Gestion des identités et des accès couvrant les comptes, rôles, droits, fédérations, mécanismes d’authentification et règles d’autorisation.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://learn.microsoft.com/en-us/security/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="identifiant information servant à désigner une entité dans un système, par exemple un nom d’utilisateur, un identifiant de service ou un numéro d’objet.">
+      <h3>Identifiant</h3>
+      <p>Information servant à désigner une entité dans un système, par exemple un nom d’utilisateur, un identifiant de service ou un numéro d’objet.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="implémentation mise en œuvre concrète d’un mécanisme, d’un contrôle, d’un protocole ou d’un outil au sein d’un système ou d’une architecture.">
+      <h3>Implémentation</h3>
+      <p>Mise en œuvre concrète d’un mécanisme, d’un contrôle, d’un protocole ou d’un outil au sein d’un système ou d’une architecture.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="indicateur de compromission (ioc) artefact observable pouvant signaler une intrusion ou un comportement malveillant, par exemple un hash, une ip, un domaine, une clé registre ou une url.">
+      <h3>Indicateur de compromission (IOC)</h3>
+      <p>Artefact observable pouvant signaler une intrusion ou un comportement malveillant, par exemple un hash, une IP, un domaine, une clé registre ou une URL.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cisa.gov/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="indentation organisation visuelle du code ou de la configuration par retrait de lignes, utile à la lisibilité, à la structure logique et à l’absence d’erreurs dans certains langages.">
+      <h3>Indentation</h3>
+      <p>Organisation visuelle du code ou de la configuration par retrait de lignes, utile à la lisibilité, à la structure logique et à l’absence d’erreurs dans certains langages.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="injection sql attaque consistant à injecter des requêtes sql malveillantes dans une application insuffisamment protégée afin d’accéder ou de manipuler des données.">
+      <h3>Injection SQL</h3>
+      <p>Attaque consistant à injecter des requêtes SQL malveillantes dans une application insuffisamment protégée afin d’accéder ou de manipuler des données.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="intégrité propriété selon laquelle une information, une configuration ou un traitement n’a pas été altéré de manière non autorisée ou non détectée.">
+      <h3>Intégrité</h3>
+      <p>Propriété selon laquelle une information, une configuration ou un traitement n’a pas été altéré de manière non autorisée ou non détectée.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="intrusion informatique accès ou maintien non autorisé dans un système, un réseau, un compte, un terminal ou une application.">
+      <h3>Intrusion informatique</h3>
+      <p>Accès ou maintien non autorisé dans un système, un réseau, un compte, un terminal ou une application.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="inventaire d’actifs recensement structuré des systèmes, applications, comptes, données, dépendances et services exposés à gérer ou à protéger.">
+      <h3>Inventaire d’actifs</h3>
+      <p>Recensement structuré des systèmes, applications, comptes, données, dépendances et services exposés à gérer ou à protéger.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="ip spoofing usurpation d’adresse ip visant à masquer l’origine réelle d’un trafic ou à se faire passer pour un système de confiance.">
+      <h3>IP spoofing</h3>
+      <p>Usurpation d’adresse IP visant à masquer l’origine réelle d’un trafic ou à se faire passer pour un système de confiance.</p>
+      
+      
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-J">
+      <div class="letter-head">
+        <div class="letter-badge">J</div>
+        <h2>J</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="jeton d’authentification preuve temporaire ou objet logique permettant de maintenir une session, d’autoriser une requête ou de valider une authentification.">
+      <h3>Jeton d’authentification</h3>
+      <p>Preuve temporaire ou objet logique permettant de maintenir une session, d’autoriser une requête ou de valider une authentification.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="journalisation production, structuration, conservation et exploitation des événements techniques et fonctionnels d’un système en vue de la supervision, de l’audit et de l’investigation.">
+      <h3>Journalisation</h3>
+      <p>Production, structuration, conservation et exploitation des événements techniques et fonctionnels d’un système en vue de la supervision, de l’audit et de l’investigation.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://cyber.gouv.fr/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-K">
+      <div class="letter-head">
+        <div class="letter-badge">K</div>
+        <h2>K</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="kill chain modèle décrivant les étapes successives d’une attaque, utile pour comprendre où détecter, ralentir ou interrompre l’adversaire.">
+      <h3>Kill chain</h3>
+      <p>Modèle décrivant les étapes successives d’une attaque, utile pour comprendre où détecter, ralentir ou interrompre l’adversaire.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://attack.mitre.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-L">
+      <div class="letter-head">
+        <div class="letter-badge">L</div>
+        <h2>L</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="liste de contrôle d’accès (acl) ensemble de règles définissant les droits accordés à des utilisateurs, groupes ou systèmes sur une ressource donnée.">
+      <h3>Liste de contrôle d’accès (ACL)</h3>
+      <p>Ensemble de règles définissant les droits accordés à des utilisateurs, groupes ou systèmes sur une ressource donnée.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="logiciel antivirus logiciel destiné à détecter, bloquer, mettre en quarantaine ou supprimer des codes malveillants connus ou suspects.">
+      <h3>Logiciel antivirus</h3>
+      <p>Logiciel destiné à détecter, bloquer, mettre en quarantaine ou supprimer des codes malveillants connus ou suspects.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="logiciel de rançon programme malveillant qui chiffre, bloque ou menace de divulguer des données afin d’obtenir un paiement de la victime.">
+      <h3>Logiciel de rançon</h3>
+      <p>Programme malveillant qui chiffre, bloque ou menace de divulguer des données afin d’obtenir un paiement de la victime.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cybermalveillance.gouv.fr/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="logiciel espion code malveillant chargé d’observer, de collecter ou de transmettre à l’insu de l’utilisateur des données, habitudes ou secrets.">
+      <h3>Logiciel espion</h3>
+      <p>Code malveillant chargé d’observer, de collecter ou de transmettre à l’insu de l’utilisateur des données, habitudes ou secrets.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="logiciel malveillant terme générique couvrant les virus, vers, chevaux de troie, rançongiciels, spyware, wipers et autres codes conçus pour nuire ou détourner un système.">
+      <h3>Logiciel malveillant</h3>
+      <p>Terme générique couvrant les virus, vers, chevaux de Troie, rançongiciels, spyware, wipers et autres codes conçus pour nuire ou détourner un système.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="logs enregistrements d’événements techniques ou fonctionnels produits par des systèmes, applications, équipements réseau ou services cloud.">
+      <h3>Logs</h3>
+      <p>Enregistrements d’événements techniques ou fonctionnels produits par des systèmes, applications, équipements réseau ou services cloud.</p>
+      
+      
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-M">
+      <div class="letter-head">
+        <div class="letter-badge">M</div>
+        <h2>M</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="malvertising diffusion de contenu publicitaire malveillant sur des régies, des sites ou des plateformes afin de rediriger, tromper ou infecter des utilisateurs.">
+      <h3>Malvertising</h3>
+      <p>Diffusion de contenu publicitaire malveillant sur des régies, des sites ou des plateformes afin de rediriger, tromper ou infecter des utilisateurs.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="menace cause potentielle d’un incident susceptible d’exploiter une vulnérabilité et de provoquer un impact sur une organisation.">
+      <h3>Menace</h3>
+      <p>Cause potentielle d’un incident susceptible d’exploiter une vulnérabilité et de provoquer un impact sur une organisation.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="mfa authentification multifacteur combinant plusieurs catégories de preuves d’identité afin d’élever le niveau de fiabilité de la connexion.">
+      <h3>MFA</h3>
+      <p>Authentification multifacteur combinant plusieurs catégories de preuves d’identité afin d’élever le niveau de fiabilité de la connexion.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="mitre att&amp;ck base de connaissance décrivant tactiques, techniques et sous-techniques observées dans des opérations offensives réelles.">
+      <h3>MITRE ATT&amp;CK</h3>
+      <p>Base de connaissance décrivant tactiques, techniques et sous-techniques observées dans des opérations offensives réelles.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://attack.mitre.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="mot de passe secret mémorisé utilisé pour authentifier un utilisateur ou une entité. sa robustesse dépend de sa longueur, de son unicité et de sa gestion.">
+      <h3>Mot de passe</h3>
+      <p>Secret mémorisé utilisé pour authentifier un utilisateur ou une entité. Sa robustesse dépend de sa longueur, de son unicité et de sa gestion.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="mot de passe à usage unique code temporaire, souvent limité dans le temps ou à une seule utilisation, servant de facteur d’authentification complémentaire.">
+      <h3>Mot de passe à usage unique</h3>
+      <p>Code temporaire, souvent limité dans le temps ou à une seule utilisation, servant de facteur d’authentification complémentaire.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="mouvement latéral déplacement d’un attaquant d’un système compromis vers d’autres hôtes, comptes ou ressources à l’intérieur d’un environnement.">
+      <h3>Mouvement latéral</h3>
+      <p>Déplacement d’un attaquant d’un système compromis vers d’autres hôtes, comptes ou ressources à l’intérieur d’un environnement.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://attack.mitre.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="mutation polymorphe technique par laquelle un malware modifie son apparence ou certaines parties de son code afin d’échapper à des détections simples par signature.">
+      <h3>Mutation polymorphe</h3>
+      <p>Technique par laquelle un malware modifie son apparence ou certaines parties de son code afin d’échapper à des détections simples par signature.</p>
+      
+      
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-N">
+      <div class="letter-head">
+        <div class="letter-badge">N</div>
+        <h2>N</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="nat mécanisme de translation d’adresses réseau qui permet de réécrire des adresses ip entre différents périmètres, souvent au niveau d’un routeur ou pare-feu.">
+      <h3>NAT</h3>
+      <p>Mécanisme de translation d’adresses réseau qui permet de réécrire des adresses IP entre différents périmètres, souvent au niveau d’un routeur ou pare-feu.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="nis2 cadre réglementaire européen renforçant les exigences de cybersécurité, de gouvernance, de notification et de résilience pour de nombreuses entités.">
+      <h3>NIS2</h3>
+      <p>Cadre réglementaire européen renforçant les exigences de cybersécurité, de gouvernance, de notification et de résilience pour de nombreuses entités.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.enisa.europa.eu/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="nmap outil de découverte réseau et d’énumération de ports, services et versions utilisé en audit autorisé, en inventaire, en validation d’exposition et en pentest.">
+      <h3>Nmap <span class="ref-badge">Voir plus</span></h3>
+      <p>Outil de découverte réseau et d’énumération de ports, services et versions utilisé en audit autorisé, en inventaire, en validation d’exposition et en pentest.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://nmap.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="nom d’utilisateur identifiant présenté lors d’une authentification pour désigner le compte ou la session demandée.">
+      <h3>Nom d’utilisateur</h3>
+      <p>Identifiant présenté lors d’une authentification pour désigner le compte ou la session demandée.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="nvd base du nist enrichissant les entrées cve avec des métadonnées, des métriques cvss, des références et parfois des configurations affectées.">
+      <h3>NVD</h3>
+      <p>Base du NIST enrichissant les entrées CVE avec des métadonnées, des métriques CVSS, des références et parfois des configurations affectées.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://nvd.nist.gov/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-O">
+      <div class="letter-head">
+        <div class="letter-badge">O</div>
+        <h2>O</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="observabilité capacité d’un système à rendre visibles ses états internes au travers de journaux, métriques, traces et signaux exploitables.">
+      <h3>Observabilité</h3>
+      <p>Capacité d’un système à rendre visibles ses états internes au travers de journaux, métriques, traces et signaux exploitables.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="obfuscation technique de complexification ou de brouillage du code, des chaînes ou de la logique d’un programme pour en gêner la lecture et l’analyse.">
+      <h3>Obfuscation</h3>
+      <p>Technique de complexification ou de brouillage du code, des chaînes ou de la logique d’un programme pour en gêner la lecture et l’analyse.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="osint collecte et exploitation d’informations provenant de sources ouvertes afin d’établir un contexte, cartographier une exposition ou enrichir une analyse.">
+      <h3>OSINT</h3>
+      <p>Collecte et exploitation d’informations provenant de sources ouvertes afin d’établir un contexte, cartographier une exposition ou enrichir une analyse.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cisa.gov/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="owasp top 10 référentiel synthétique des principales catégories de risques applicatifs web, très utilisé pour la sensibilisation et l’audit.">
+      <h3>OWASP Top 10</h3>
+      <p>Référentiel synthétique des principales catégories de risques applicatifs Web, très utilisé pour la sensibilisation et l’audit.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-P">
+      <div class="letter-head">
+        <div class="letter-badge">P</div>
+        <h2>P</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="pam gestion des accès à privilèges couvrant les comptes sensibles, les coffres de secrets, la traçabilité des sessions et la réduction des abus de privilèges.">
+      <h3>PAM</h3>
+      <p>Gestion des accès à privilèges couvrant les comptes sensibles, les coffres de secrets, la traçabilité des sessions et la réduction des abus de privilèges.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="pare-feu équipement ou logiciel filtrant les flux réseau selon des règles fondées sur la source, la destination, le protocole, le port ou l’état de la session.">
+      <h3>Pare-feu <span class="ref-badge">Voir plus</span></h3>
+      <p>Équipement ou logiciel filtrant les flux réseau selon des règles fondées sur la source, la destination, le protocole, le port ou l’état de la session.</p>
+      <div class="example">Exemple : autoriser HTTPS sortant, bloquer SMB exposé vers Internet et journaliser les connexions refusées.</div>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="parsing analyse structurée d’un flux, d’un journal, d’un message ou d’un fichier afin d’en extraire des champs exploitables pour l’automatisation, la corrélation ou la visualisation.">
+      <h3>Parsing</h3>
+      <p>Analyse structurée d’un flux, d’un journal, d’un message ou d’un fichier afin d’en extraire des champs exploitables pour l’automatisation, la corrélation ou la visualisation.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="patch management processus de gestion des correctifs couvrant la détection, la priorisation, le test, le déploiement et le contrôle des mises à jour de sécurité.">
+      <h3>Patch management</h3>
+      <p>Processus de gestion des correctifs couvrant la détection, la priorisation, le test, le déploiement et le contrôle des mises à jour de sécurité.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="pentest test d’intrusion autorisé visant à évaluer la résistance d’un système, d’une application ou d’une architecture par la reproduction contrôlée de techniques offensives.">
+      <h3>Pentest</h3>
+      <p>Test d’intrusion autorisé visant à évaluer la résistance d’un système, d’une application ou d’une architecture par la reproduction contrôlée de techniques offensives.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://owasp.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="pharming technique de redirection frauduleuse d’un utilisateur vers un faux site, souvent via la manipulation de résolutions dns ou de redirections applicatives.">
+      <h3>Pharming</h3>
+      <p>Technique de redirection frauduleuse d’un utilisateur vers un faux site, souvent via la manipulation de résolutions DNS ou de redirections applicatives.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="plan de continuité d’activité dispositif visant à maintenir les activités essentielles pendant une crise ou une interruption majeure.">
+      <h3>Plan de continuité d’activité</h3>
+      <p>Dispositif visant à maintenir les activités essentielles pendant une crise ou une interruption majeure.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.iso.org/standard/75106.html" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="plan de reprise d’activité dispositif visant à restaurer les systèmes, services et données dans des délais et à un niveau convenus après un sinistre ou un incident majeur.">
+      <h3>Plan de reprise d’activité</h3>
+      <p>Dispositif visant à restaurer les systèmes, services et données dans des délais et à un niveau convenus après un sinistre ou un incident majeur.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.iso.org/standard/75106.html" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="politique de sécurité ensemble des règles, objectifs et principes définissant le cadre attendu de la sécurité au sein d’une organisation.">
+      <h3>Politique de sécurité</h3>
+      <p>Ensemble des règles, objectifs et principes définissant le cadre attendu de la sécurité au sein d’une organisation.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="porte dérobée accès dissimulé ou détourné permettant d’entrer dans un système en contournant les mécanismes normaux de contrôle.">
+      <h3>Porte dérobée</h3>
+      <p>Accès dissimulé ou détourné permettant d’entrer dans un système en contournant les mécanismes normaux de contrôle.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="posture de sécurité niveau global de préparation, de maîtrise et de résilience d’une organisation face aux risques cyber.">
+      <h3>Posture de sécurité</h3>
+      <p>Niveau global de préparation, de maîtrise et de résilience d’une organisation face aux risques cyber.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="preuve de concept démonstration technique limitée montrant qu’une vulnérabilité ou une hypothèse d’exploitation est réalisable.">
+      <h3>Preuve de concept</h3>
+      <p>Démonstration technique limitée montrant qu’une vulnérabilité ou une hypothèse d’exploitation est réalisable.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="principe du moindre privilège règle consistant à n’accorder à une entité que les droits strictement nécessaires à sa mission, pour la durée nécessaire et sur le périmètre nécessaire.">
+      <h3>Principe du moindre privilège</h3>
+      <p>Règle consistant à n’accorder à une entité que les droits strictement nécessaires à sa mission, pour la durée nécessaire et sur le périmètre nécessaire.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="proxy intermédiaire réseau ou applicatif centralisant et contrôlant certains échanges, souvent pour filtrer, authentifier, journaliser ou mettre en cache.">
+      <h3>Proxy</h3>
+      <p>Intermédiaire réseau ou applicatif centralisant et contrôlant certains échanges, souvent pour filtrer, authentifier, journaliser ou mettre en cache.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://cyber.gouv.fr/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-Q">
+      <div class="letter-head">
+        <div class="letter-badge">Q</div>
+        <h2>Q</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="qualys exemple de plateforme de gestion des vulnérabilités, d’audit et de conformité utilisée dans certains environnements professionnels.">
+      <h3>Qualys</h3>
+      <p>Exemple de plateforme de gestion des vulnérabilités, d’audit et de conformité utilisée dans certains environnements professionnels.</p>
+      <div class="example">Exemple d’usage : inventaire d’actifs et détection de vulnérabilités.</div>
+      
+    </article>
+    
+
+    <article class="term-card" data-term="quarantaine mesure de confinement consistant à isoler un fichier, un message, un poste ou une ressource afin d’empêcher sa propagation ou son exécution.">
+      <h3>Quarantaine</h3>
+      <p>Mesure de confinement consistant à isoler un fichier, un message, un poste ou une ressource afin d’empêcher sa propagation ou son exécution.</p>
+      
+      
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-R">
+      <div class="letter-head">
+        <div class="letter-badge">R</div>
+        <h2>R</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="rançongiciel logiciel malveillant qui chiffre ou bloque des données et exige une rançon pour leur restitution, leur non-divulgation ou la remise en service.">
+      <h3>Rançongiciel <span class="ref-badge">Voir plus</span></h3>
+      <p>Logiciel malveillant qui chiffre ou bloque des données et exige une rançon pour leur restitution, leur non-divulgation ou la remise en service.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cybermalveillance.gouv.fr/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="redondance duplication de ressources, de services ou de chemins critiques afin d’augmenter la disponibilité et la tolérance aux pannes.">
+      <h3>Redondance</h3>
+      <p>Duplication de ressources, de services ou de chemins critiques afin d’augmenter la disponibilité et la tolérance aux pannes.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="regex langage de motifs textuels utilisé pour rechercher, filtrer, découper, valider ou extraire des chaînes dans des journaux, scripts ou configurations.">
+      <h3>Regex</h3>
+      <p>Langage de motifs textuels utilisé pour rechercher, filtrer, découper, valider ou extraire des chaînes dans des journaux, scripts ou configurations.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="reverse engineering analyse d’un binaire, d’un protocole ou d’un mécanisme pour en comprendre le fonctionnement interne, les dépendances et les capacités.">
+      <h3>Reverse engineering <span class="ref-badge">Voir plus</span></h3>
+      <p>Analyse d’un binaire, d’un protocole ou d’un mécanisme pour en comprendre le fonctionnement interne, les dépendances et les capacités.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://ghidra-sre.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="réseau privé virtuel tunnel chiffré permettant de relier un utilisateur, un poste ou un site à un autre périmètre réseau de manière sécurisée.">
+      <h3>Réseau privé virtuel</h3>
+      <p>Tunnel chiffré permettant de relier un utilisateur, un poste ou un site à un autre périmètre réseau de manière sécurisée.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cisa.gov/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="responsable de la sécurité de l’information fonction de pilotage stratégique de la sécurité, souvent chargée de la gouvernance, des risques, de la conformité et des arbitrages de protection.">
+      <h3>Responsable de la sécurité de l’information</h3>
+      <p>Fonction de pilotage stratégique de la sécurité, souvent chargée de la gouvernance, des risques, de la conformité et des arbitrages de protection.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="risque informatique combinaison de la probabilité d’un événement cyber et de son impact potentiel sur les actifs, les activités ou la conformité d’une organisation.">
+      <h3>Risque informatique</h3>
+      <p>Combinaison de la probabilité d’un événement cyber et de son impact potentiel sur les actifs, les activités ou la conformité d’une organisation.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="rootkit ensemble de mécanismes destinés à masquer la présence d’un attaquant, d’un malware ou d’une modification système, souvent avec des fonctions de persistance.">
+      <h3>Rootkit</h3>
+      <p>Ensemble de mécanismes destinés à masquer la présence d’un attaquant, d’un malware ou d’une modification système, souvent avec des fonctions de persistance.</p>
+      
+      
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-S">
+      <div class="letter-head">
+        <div class="letter-badge">S</div>
+        <h2>S</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="sauvegarde copie sécurisée de données ou de systèmes permettant leur restauration après perte, corruption, suppression ou sinistre.">
+      <h3>Sauvegarde</h3>
+      <p>Copie sécurisée de données ou de systèmes permettant leur restauration après perte, corruption, suppression ou sinistre.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.iso.org/standard/75106.html" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="scalabilité capacité d’une architecture, d’un service ou d’un outil à monter en charge sans dégradation inacceptable de ses performances ou de sa stabilité.">
+      <h3>Scalabilité</h3>
+      <p>Capacité d’une architecture, d’un service ou d’un outil à monter en charge sans dégradation inacceptable de ses performances ou de sa stabilité.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="scission de tunnel configuration vpn où seule une partie du trafic passe dans le tunnel sécurisé, le reste continuant à sortir directement vers internet.">
+      <h3>Scission de tunnel</h3>
+      <p>Configuration VPN où seule une partie du trafic passe dans le tunnel sécurisé, le reste continuant à sortir directement vers Internet.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="score cvss valeur numérique synthétisant la sévérité technique d’une vulnérabilité selon un référentiel commun de métriques.">
+      <h3>Score CVSS</h3>
+      <p>Valeur numérique synthétisant la sévérité technique d’une vulnérabilité selon un référentiel commun de métriques.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://nvd.nist.gov/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="sécurisation dès la conception approche consistant à intégrer les exigences de sécurité dès la phase de conception d’un produit, d’un service ou d’un projet.">
+      <h3>Sécurisation dès la conception</h3>
+      <p>Approche consistant à intégrer les exigences de sécurité dès la phase de conception d’un produit, d’un service ou d’un projet.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://cyber.gouv.fr/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="sécurité de l’information discipline visant à préserver la confidentialité, l’intégrité, la disponibilité et d’autres propriétés associées des informations et systèmes.">
+      <h3>Sécurité de l’information</h3>
+      <p>Discipline visant à préserver la confidentialité, l’intégrité, la disponibilité et d’autres propriétés associées des informations et systèmes.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="sécurité des terminaux protection des postes, serveurs, mobiles et autres hôtes contre les malwares, abus de comptes, exécutions suspectes et fuites de données.">
+      <h3>Sécurité des terminaux</h3>
+      <p>Protection des postes, serveurs, mobiles et autres hôtes contre les malwares, abus de comptes, exécutions suspectes et fuites de données.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="segmentation réseau découpage logique ou physique d’un réseau en zones distinctes afin de limiter les flux, les propagations et les impacts d’une compromission.">
+      <h3>Segmentation réseau</h3>
+      <p>Découpage logique ou physique d’un réseau en zones distinctes afin de limiter les flux, les propagations et les impacts d’une compromission.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="serveur mandataire synonyme de proxy ; intermédiaire chargé de relayer, contrôler ou observer des communications entre clients et services.">
+      <h3>Serveur mandataire</h3>
+      <p>Synonyme de proxy ; intermédiaire chargé de relayer, contrôler ou observer des communications entre clients et services.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="siem plateforme de collecte, normalisation, recherche et corrélation de journaux servant à la supervision, à la détection et à l’investigation en soc.">
+      <h3>SIEM <span class="ref-badge">Voir plus</span></h3>
+      <p>Plateforme de collecte, normalisation, recherche et corrélation de journaux servant à la supervision, à la détection et à l’investigation en SOC.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.splunk.com/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="signature numérique mécanisme cryptographique garantissant l’authenticité d’un émetteur et l’intégrité d’un contenu signé.">
+      <h3>Signature numérique</h3>
+      <p>Mécanisme cryptographique garantissant l’authenticité d’un émetteur et l’intégrité d’un contenu signé.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://csrc.nist.gov/glossary" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="sniffer outil capturant ou observant des trames et paquets réseau afin d’en analyser le contenu ou les métadonnées.">
+      <h3>Sniffer</h3>
+      <p>Outil capturant ou observant des trames et paquets réseau afin d’en analyser le contenu ou les métadonnées.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.wireshark.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="soc centre opérationnel de sécurité chargé de surveiller, détecter, qualifier, investiguer et coordonner la réponse aux incidents de sécurité.">
+      <h3>SOC</h3>
+      <p>Centre opérationnel de sécurité chargé de surveiller, détecter, qualifier, investiguer et coordonner la réponse aux incidents de sécurité.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="soar plateforme d’orchestration et d’automatisation permettant d’enrichir les alertes et d’exécuter des playbooks de réponse.">
+      <h3>SOAR</h3>
+      <p>Plateforme d’orchestration et d’automatisation permettant d’enrichir les alertes et d’exécuter des playbooks de réponse.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.ibm.com/topics/soar" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="spoofing usurpation d’une identité technique ou logique, par exemple une adresse ip, un domaine, un expéditeur ou un service.">
+      <h3>Spoofing</h3>
+      <p>Usurpation d’une identité technique ou logique, par exemple une adresse IP, un domaine, un expéditeur ou un service.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="surface d’attaque ensemble des points d’entrée, composants, services, interfaces et dépendances exposés qu’un attaquant pourrait viser.">
+      <h3>Surface d’attaque</h3>
+      <p>Ensemble des points d’entrée, composants, services, interfaces et dépendances exposés qu’un attaquant pourrait viser.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="suricata moteur de détection et parfois de prévention réseau capable d’analyser des paquets, des flux et certains protocoles applicatifs.">
+      <h3>Suricata</h3>
+      <p>Moteur de détection et parfois de prévention réseau capable d’analyser des paquets, des flux et certains protocoles applicatifs.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://suricata.io/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="sysmon outil de journalisation avancée pour windows qui enrichit la visibilité sur les processus, connexions réseau, fichiers et changements système.">
+      <h3>Sysmon</h3>
+      <p>Outil de journalisation avancée pour Windows qui enrichit la visibilité sur les processus, connexions réseau, fichiers et changements système.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-T">
+      <div class="letter-head">
+        <div class="letter-badge">T</div>
+        <h2>T</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="tactique dans mitre att&amp;ck, objectif opérationnel poursuivi par l’attaquant à un moment donné, comme l’accès initial, la persistance ou l’exfiltration.">
+      <h3>Tactique</h3>
+      <p>Dans MITRE ATT&amp;CK, objectif opérationnel poursuivi par l’attaquant à un moment donné, comme l’accès initial, la persistance ou l’exfiltration.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="tls protocole cryptographique protégeant la confidentialité et l’intégrité des échanges applicatifs sur un réseau, notamment pour https.">
+      <h3>TLS</h3>
+      <p>Protocole cryptographique protégeant la confidentialité et l’intégrité des échanges applicatifs sur un réseau, notamment pour HTTPS.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://csrc.nist.gov/glossary" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="topologie réseau organisation logique ou physique des équipements, des liaisons et des zones qui composent un réseau.">
+      <h3>Topologie réseau</h3>
+      <p>Organisation logique ou physique des équipements, des liaisons et des zones qui composent un réseau.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="trace information chronologique ou contextuelle laissée par une action, un flux ou un événement, utile à l’investigation et à la corrélation.">
+      <h3>Trace</h3>
+      <p>Information chronologique ou contextuelle laissée par une action, un flux ou un événement, utile à l’investigation et à la corrélation.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="threat hunting voir chasse aux menaces : recherche proactive de signaux faibles et d’activités adverses échappant aux détections traditionnelles.">
+      <h3>Threat hunting</h3>
+      <p>Voir chasse aux menaces : recherche proactive de signaux faibles et d’activités adverses échappant aux détections traditionnelles.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="ttp acronyme de tactiques, techniques et procédures ; il décrit le comportement et le mode opératoire d’un adversaire au-delà des simples indicateurs statiques.">
+      <h3>TTP</h3>
+      <p>Acronyme de tactiques, techniques et procédures ; il décrit le comportement et le mode opératoire d’un adversaire au-delà des simples indicateurs statiques.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://attack.mitre.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="tunnel vpn canal logique chiffré encapsulant des flux entre deux extrémités afin de protéger les communications et de contrôler l’accès distant.">
+      <h3>Tunnel VPN</h3>
+      <p>Canal logique chiffré encapsulant des flux entre deux extrémités afin de protéger les communications et de contrôler l’accès distant.</p>
+      
+      
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-U">
+      <div class="letter-head">
+        <div class="letter-badge">U</div>
+        <h2>U</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="usurpation d’adresse ip technique consistant à falsifier l’adresse ip source apparente d’un paquet afin de masquer l’origine réelle ou de tromper une cible.">
+      <h3>Usurpation d’adresse IP</h3>
+      <p>Technique consistant à falsifier l’adresse IP source apparente d’un paquet afin de masquer l’origine réelle ou de tromper une cible.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="usurpation d’identité fait de se faire passer pour une personne, un service ou une organisation afin d’obtenir un accès, une confiance ou une action.">
+      <h3>Usurpation d’identité</h3>
+      <p>Fait de se faire passer pour une personne, un service ou une organisation afin d’obtenir un accès, une confiance ou une action.</p>
+      
+      
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-V">
+      <div class="letter-head">
+        <div class="letter-badge">V</div>
+        <h2>V</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="validation de correctif vérification qu’un correctif a bien été appliqué, qu’il corrige la faiblesse visée et qu’il n’introduit pas d’effet indésirable critique.">
+      <h3>Validation de correctif</h3>
+      <p>Vérification qu’un correctif a bien été appliqué, qu’il corrige la faiblesse visée et qu’il n’introduit pas d’effet indésirable critique.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="vecteur d’attaque chemin ou moyen emprunté pour atteindre une cible, par exemple un email, un service exposé, une api, une clé usb ou un accès distant.">
+      <h3>Vecteur d’attaque</h3>
+      <p>Chemin ou moyen emprunté pour atteindre une cible, par exemple un email, un service exposé, une API, une clé USB ou un accès distant.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="veille cyber observation continue des menaces, vulnérabilités, textes réglementaires, référentiels, campagnes et tendances techniques ou géopolitiques.">
+      <h3>Veille cyber</h3>
+      <p>Observation continue des menaces, vulnérabilités, textes réglementaires, référentiels, campagnes et tendances techniques ou géopolitiques.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="ver informatique programme malveillant capable de se propager automatiquement d’une machine à l’autre sans intervention explicite de l’utilisateur.">
+      <h3>Ver informatique <span class="ref-badge">Voir plus</span></h3>
+      <p>Programme malveillant capable de se propager automatiquement d’une machine à l’autre sans intervention explicite de l’utilisateur.</p>
+      <div class="example">Exemple : un ver réseau peut exploiter un service exposé et se répandre latéralement sans qu’un utilisateur ouvre un fichier infecté.</div>
+      <div class="meta-links"><a class="tool-link" href="https://www.cisa.gov/news-events/news/understanding-malware-viruses-spyware-and-ransomware" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="virtualisation technique permettant d’exécuter des systèmes ou services isolés dans des environnements logiques distincts sur une même infrastructure physique.">
+      <h3>Virtualisation</h3>
+      <p>Technique permettant d’exécuter des systèmes ou services isolés dans des environnements logiques distincts sur une même infrastructure physique.</p>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="virus informatique code capable d’infecter un fichier ou un système en se répliquant dans d’autres composants exécutables ou documents.">
+      <h3>Virus informatique <span class="ref-badge">Voir plus</span></h3>
+      <p>Code capable d’infecter un fichier ou un système en se répliquant dans d’autres composants exécutables ou documents.</p>
+      <div class="example">Exemple : un document piégé contenant une macro malveillante peut infecter d’autres fichiers ou déposer une charge complémentaire. Un virus a besoin d’un support d’exécution ou d’un hôte, contrairement à certains vers.</div>
+      <div class="meta-links"><a class="tool-link" href="https://www.cisa.gov/news-events/news/understanding-malware-viruses-spyware-and-ransomware" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+      
+      
+    </article>
+    
+
+    <article class="term-card" data-term="vulnérabilité faiblesse exploitable dans un actif, un code, une configuration, un processus ou une organisation, susceptible d’ouvrir la voie à un impact cyber.">
+      <h3>Vulnérabilité</h3>
+      <p>Faiblesse exploitable dans un actif, un code, une configuration, un processus ou une organisation, susceptible d’ouvrir la voie à un impact cyber.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cve.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-W">
+      <div class="letter-head">
+        <div class="letter-badge">W</div>
+        <h2>W</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="waf pare-feu applicatif web conçu pour filtrer et protéger des applications http/https contre certaines attaques ciblant la couche applicative.">
+      <h3>WAF</h3>
+      <p>Pare-feu applicatif Web conçu pour filtrer et protéger des applications HTTP/HTTPS contre certaines attaques ciblant la couche applicative.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://owasp.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="wireshark outil d’analyse de trafic réseau permettant de capturer, filtrer et inspecter des paquets à des fins de diagnostic, d’enquête ou d’apprentissage.">
+      <h3>Wireshark</h3>
+      <p>Outil d’analyse de trafic réseau permettant de capturer, filtrer et inspecter des paquets à des fins de diagnostic, d’enquête ou d’apprentissage.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.wireshark.org/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+
+    <article class="term-card" data-term="wiper logiciel malveillant destiné à effacer ou corrompre irrémédiablement des données plutôt qu’à les chiffrer pour rançon.">
+      <h3>Wiper</h3>
+      <p>Logiciel malveillant destiné à effacer ou corrompre irrémédiablement des données plutôt qu’à les chiffrer pour rançon.</p>
+      
+      
+    </article>
+    
+      </div>
+    </section>
+    
+    <section class="letter-section" id="sec-Z">
+      <div class="letter-head">
+        <div class="letter-badge">Z</div>
+        <h2>Z</h2>
+      </div>
+      <div class="term-grid">
+        
+    <article class="term-card" data-term="zero-day vulnérabilité inconnue de l’éditeur ou sans correctif disponible au moment de son exploitation ou de sa révélation.">
+      <h3>Zero-day <span class="ref-badge">Voir plus</span></h3>
+      <p>Vulnérabilité inconnue de l’éditeur ou sans correctif disponible au moment de son exploitation ou de sa révélation.</p>
+      
+      <div class="meta-links"><a class="tool-link" href="https://www.cisa.gov/" target="_blank" rel="noopener noreferrer">Référence officielle</a></div>
+    </article>
+    
+      </div>
+    </section>
+    
+
+    <footer>
+      Ce lexique a été préparé pour une vitrine portfolio orientée cybersécurité. Il combine exigence terminologique, lisibilité professionnelle et utilité opérationnelle. Les définitions ont été reformulées dans un style propre afin de rester cohérentes avec un usage de présentation, d’apprentissage et d’entretien.
+    </footer>
+  </main>
+</div>
+
+<script>
+const input = document.getElementById('search');
+const cards = [...document.querySelectorAll('.term-card')];
+const sections = [...document.querySelectorAll('.letter-section')];
+input.addEventListener('input', () => {
+  const q = input.value.toLowerCase().trim();
+  cards.forEach(card => {
+    const hay = card.dataset.term;
+    const show = hay.includes(q);
+    card.classList.toggle('hidden', !show);
+  });
+  sections.forEach(section => {
+    const visible = section.querySelectorAll('.term-card:not(.hidden)').length;
+    section.classList.toggle('hidden', visible === 0);
+  });
+});
+</script>
+</body>
+</html>

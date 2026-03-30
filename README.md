@@ -1,85 +1,128 @@
-# Arsène Amalou — Cybersecurity Portfolio
+# Arsène Amalou — Portfolio Cybersécurité
 
-Professional portfolio of **Arsène Amalou**  
-SOC Analyst | Junior Pentester | Strategic Cyber Analysis
-
-This portfolio presents a concise overview of professional experience, research interests and cybersecurity positioning.
-
-The objective of this portfolio is to provide a controlled access presentation of professional competencies related to cybersecurity operations, information systems governance and strategic analysis of cyber and cognitive threats.
+Analyste SOC | Pentester junior | Analyse stratégique cyber
 
 ---
 
-## Core Areas
+## Présentation
 
-- Security Operations Center (SOC) monitoring and incident analysis
-- Cyber threat analysis and strategic cyber environment
-- Information warfare and cognitive warfare dynamics
-- Information systems security governance
-- Cyber risk analysis methodologies (EBIOS RM)
-- Security standards and frameworks (ISO 27001, ISO 42001, ITIL, COBIT)
-- OSINT and weak signal analysis
+Ce portfolio propose une présentation structurée et professionnelle :
 
----
+- des compétences en cybersécurité
+- du positionnement opérationnel
+- de l’orientation en analyse stratégique des environnements cyber et cognitifs
 
-## Technologies and Tools
+L’objectif est de fournir une **vitrine maîtrisée** des compétences liées à :
 
-- HTML5
-- CSS3
-- JavaScript (Vanilla)
-- Static website architecture
-
-This portfolio intentionally relies on a **minimal and controlled technical stack**, ensuring transparency, simplicity and security.
+- la cybersécurité opérationnelle (SOC)
+- la gouvernance des systèmes d’information
+- l’analyse des menaces cyber et informationnelles
 
 ---
 
-## Access Control
+## Structure du portfolio
 
-The portfolio is protected by an **access code mechanism**.
+Le portfolio est organisé en trois sections principales :
 
-This design choice allows controlled distribution to recruiters, institutions and professional contacts while limiting automated indexing and uncontrolled public diffusion.
+- **Portfolio principal (index.html)**  
+  Présentation générale, positionnement, parcours et orientation
 
----
+- **Guide SOC (soc-guide.html)**  
+  Base de connaissances opérationnelle couvrant :
+  - les concepts SOC
+  - la détection des menaces
+  - la réponse à incident
+  - des scénarios réels
 
-## Deployment
-
-This project is designed to be deployed using **static hosting platforms**, such as:
-
-- GitHub Pages
-- Netlify
-- Vercel
-
-No backend infrastructure is required.
-
----
-
-## Portfolio Content
-
-The portfolio currently presents:
-
-- professional positioning
-- experience and training
-- cybersecurity orientation
-- strategic analysis focus
-
-Future additions may include:
-
-- cybersecurity analysis papers
-- research articles on cognitive warfare
-- technical notes related to SOC environments
-- selected cybersecurity reports and visual materials
-
-All future content will remain consistent with a **professional and controlled publication approach**.
+- **Lexique cybersécurité (lexique_cyber.html)**  
+  Glossaire structuré destiné à :
+  - la compréhension professionnelle
+  - la préparation aux entretiens
+  - la maîtrise des concepts clés
 
 ---
 
-## Author
+## Domaines de compétences
+
+- Surveillance et analyse en Security Operations Center (SOC)  
+- Analyse des menaces et environnement cyber stratégique  
+- Guerre informationnelle et guerre cognitive  
+- Gouvernance de la sécurité des systèmes d’information  
+- Analyse de risques (EBIOS RM)  
+- Normes et référentiels (ISO 27001, ISO 42001, ITIL, COBIT)  
+- OSINT et analyse des signaux faibles  
+
+---
+
+## Technologies et outils
+
+- HTML5  
+- CSS3  
+- JavaScript (Vanilla)  
+- Architecture web statique  
+
+Ce portfolio repose volontairement sur une **stack technique minimale et maîtrisée**, garantissant :
+
+- lisibilité  
+- transparence  
+- sécurité  
+
+---
+
+## Contrôle d’accès
+
+Le portfolio est protégé par un **mécanisme de code d’accès**.
+
+Ce choix permet :
+
+- une diffusion maîtrisée  
+- un accès ciblé (recruteurs, institutions)  
+- une limitation de l’indexation automatique  
+
+---
+
+## Déploiement
+
+Projet conçu pour un hébergement statique :
+
+- GitHub Pages  
+- Netlify  
+- Vercel  
+
+Aucune infrastructure backend requise.
+
+---
+
+## Contenu actuel
+
+- positionnement professionnel  
+- parcours et formation  
+- orientation cybersécurité  
+- approche stratégique  
+- référentiel SOC  
+- lexique cybersécurité  
+
+---
+
+## Évolutions prévues
+
+- analyses cyber approfondies  
+- articles sur la guerre cognitive  
+- notes techniques SOC  
+- rapports et supports visuels  
+
+L’ensemble restera aligné avec une approche **professionnelle, rigoureuse et maîtrisée**.
+
+---
+
+## Auteur
 
 **Arsène Amalou**  
-Cybersecurity & Strategic Analysis
+Cybersécurité & analyse stratégique  
 
-LinkedIn  
+🔗 LinkedIn  
 https://www.linkedin.com/in/ars%C3%A8ne-amalou/
 
 ---
 
-© 2026 Arsène Amalou — All rights reserved
+© 2026 Arsène Amalou — Tous droits réservés
